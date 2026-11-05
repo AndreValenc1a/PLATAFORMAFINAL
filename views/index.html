@@ -1,0 +1,196 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Industrial Monitor | EPN</title>
+
+    <link rel="stylesheet" href="/css/estilos.css">
+
+    <style>
+        .navegacion-modulos {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 16px 24px;
+            margin: 0 0 20px;
+            border-bottom: 1px solid #263548;
+        }
+
+        .enlace-modulo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            padding: 12px 18px;
+            border: 1px solid #34465c;
+            border-radius: 10px;
+            background: #192638;
+            color: #dce8f5;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .enlace-modulo:hover {
+            background: #263c55;
+            border-color: #4b80b3;
+        }
+
+        .enlace-modulo.activo {
+            background: #16466c;
+            border-color: #3895db;
+            color: #ffffff;
+        }
+
+        .enlace-modulo:focus-visible {
+            outline: 2px solid #79c4ff;
+            outline-offset: 3px;
+        }
+
+        @media (max-width: 600px) {
+            .navegacion-modulos {
+                padding: 12px;
+            }
+
+            .enlace-modulo {
+                flex: 1 1 100%;
+            }
+        }
+    </style>
+<link rel="stylesheet" href="/css/tema-unificado.css">
+<link rel="stylesheet" href="/css/experiencia-fase7.css">
+</head>
+
+<body>
+
+    <!-- CABECERA PRINCIPAL -->
+
+    <header>
+        <div class="marca">
+            <div class="logo">⌁</div>
+
+            <div>
+                <h1 id="titulo-aplicacion"></h1>
+
+                <div
+                    class="subtitulo"
+                    id="subtitulo-aplicacion">
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTROLES DEL SUPERVISOR -->
+
+        <div class="controles-sistema">
+
+            <div
+                class="estado-sistema"
+                id="estado-sistema">
+            </div>
+
+        </div>
+    </header>
+
+    <!-- NAVEGACIÓN ENTRE MÓDULOS -->
+
+    <nav class="navegacion-modulos" aria-label="Navegación principal">
+<a href="/" class="enlace-modulo activo" data-modulo="supervision" aria-current="page"><span class="nav-icon">▦</span><span>Supervisión</span></a>
+<a href="/horometro" class="enlace-modulo" data-modulo="horometro"><span class="nav-icon">◷</span><span>Horómetro y mantenimiento</span></a>
+<a href="/eventos" class="enlace-modulo" data-modulo="eventos"><span class="nav-icon">⚠</span><span>Eventos y alarmas</span></a>
+<a href="/reportes" class="enlace-modulo" data-modulo="reportes"><span class="nav-icon">▤</span><span>Reportes PDF</span></a>
+</nav>
+
+    <!-- CONTENIDO PRINCIPAL -->
+
+    <main>
+<div class="page-intro scada-hero">
+  <div class="scada-hero-top"><div class="eyebrow">CENTRO DE CONTROL · LABORATORIO DE REDES INDUSTRIALES</div><span class="scada-live" aria-label="Lecturas obtenidas del servidor"><span class="scada-live-dot"></span>DATOS DEL BACKEND</span></div>
+  <h1>Estado de la red industrial</h1>
+  <p>Monitoreo centralizado de controladores · Diagnóstico según protocolo disponible · Actualización desde API HTTP</p>
+  <div class="scada-hero-footer"><span>● DATOS EN TIEMPO REAL DESDE API</span><span>ETHERNET INDUSTRIAL</span><a href="#lista-plc" class="ui-hero-link">Ir al inventario ↓</a></div>
+</div>
+
+        <!-- RESUMEN GENERAL -->
+
+        <section class="encabezado-seccion">
+
+            <h2 id="titulo-resumen"></h2>
+
+            <span
+                class="etiqueta"
+                id="descripcion-red">
+            </span>
+
+        </section>
+
+        <section
+            class="resumen"
+            id="panel-resumen">
+        </section>
+
+        <!-- INVENTARIO DE PLC -->
+
+        <section class="encabezado-seccion">
+
+            <h2 id="titulo-dispositivos"></h2>
+
+            <span
+                class="etiqueta"
+                id="resumen-modelos">
+            </span>
+
+        </section>
+
+        <div class="herramientas-plc" role="search"><label>Buscar PLC<input id="buscar-plc" type="search" placeholder="Modelo, IP, fabricante o número..."></label><label>Estado de comunicación<select id="filtrar-plc"><option value="todos">Todos los estados</option><option value="conectado">Conectados</option><option value="desconectado">Desconectados</option><option value="falla">En falla</option><option value="sin-datos">Sin datos / otros</option></select></label><span class="resultado-filtro" id="resultado-filtro" aria-live="polite">Esperando inventario...</span></div>
+<section
+            class="dispositivos"
+            id="lista-plc" aria-label="Inventario de PLC supervisados">
+        </section>
+
+    </main>
+
+    <!-- ARCHIVOS JAVASCRIPT -->
+
+    <script src="/js/configuracion.js"></script>
+    <script src="/js/componentes.js"></script>
+    <script src="/js/supervisor.js"></script>
+
+<script>
+/* Filtros puramente visuales: no alteran supervisión ni comunicaciones. */
+(function(){
+ const $=id=>document.getElementById(id);
+ function filtrar(){
+  const lista=$('lista-plc');if(!lista)return;
+  const busqueda=($('buscar-plc')?.value||'').trim().toLocaleLowerCase('es');
+  const filtro=$('filtrar-plc')?.value||'todos';let visibles=0;
+  const tarjetas=[...lista.querySelectorAll('.plc')];
+  for(const tarjeta of tarjetas){
+   const id=tarjeta.id.replace('plc-','');
+   const comunicacion=($('comunicacion-'+id)?.textContent||'').toUpperCase();
+   const falla=($('falla-'+id)?.textContent||'').toUpperCase();
+   let estado='sin-datos';
+   if(comunicacion==='CONECTADO')estado='conectado';
+   else if(comunicacion==='DESCONECTADO')estado='desconectado';
+   if(estado==='conectado'&&falla==='EN FALLA')estado='falla';
+   tarjeta.dataset.operacion=estado;
+   const coincideTexto=tarjeta.textContent.toLocaleLowerCase('es').includes(busqueda);
+   const coincideEstado=filtro==='todos'||filtro===estado||(filtro==='conectado'&&estado==='falla');
+   const visible=coincideTexto&&coincideEstado;
+   tarjeta.classList.toggle('plc-oculto',!visible);if(visible)visibles++;
+  }
+  if($('resultado-filtro'))$('resultado-filtro').textContent=`Mostrando ${visibles} de ${tarjetas.length} equipos`;
+ }
+ document.addEventListener('DOMContentLoaded',()=>{
+  $('buscar-plc')?.addEventListener('input',filtrar);
+  $('filtrar-plc')?.addEventListener('change',filtrar);
+  filtrar();setInterval(filtrar,1500);
+ });
+})();
+</script>
+<script src="/js/experiencia-fase7.js" defer></script>
+</body>
+</html>

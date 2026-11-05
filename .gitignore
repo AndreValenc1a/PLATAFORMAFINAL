@@ -1,0 +1,8 @@
+*node_modules
+*.xlsx
+*.csv
+*.bat
+*.env
+*respaldos
+*data
+*.vscode

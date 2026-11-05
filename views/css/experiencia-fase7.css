@@ -1,0 +1,1330 @@
+/* PLATAFORMAFINAL · Fase 7 · capa visual compartida (sin dependencias externas) */
+:root{color-scheme:dark;--ui-bg:#0b1420;--ui-surface:#142335;--ui-border:#30475d;--ui-text:#edf4fa;--ui-muted:#b1c2d3;--ui-focus:#8ecbff;--ui-green:#72dec0;--ui-amber:#f5ca7c;--ui-red:#ff8e9b;--ui-blue:#91c9fa}
+html{scroll-behavior:smooth}body{background:radial-gradient(ellipse 75% 34% at 55% -12%,rgba(66,118,161,.18),transparent),linear-gradient(180deg,#0d1826,#0b1420 55%)!important;color:var(--ui-text);-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;background-image:linear-gradient(rgba(140,190,235,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(140,190,235,.018) 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(to bottom,#000,transparent 70%)}
+main{max-width:1550px!important;margin-left:auto!important;margin-right:auto!important}h1,h2,h3{letter-spacing:-.025em}p{line-height:1.65}a,button,input,select{touch-action:manipulation}button,a,input,select{transition:background-color .2s ease,border-color .2s ease,color .2s ease,box-shadow .2s ease,transform .2s ease}button:not(:disabled){cursor:pointer}button:hover:not(:disabled){transform:translateY(-1px)}button:active:not(:disabled){transform:translateY(0)}:focus-visible{outline:3px solid var(--ui-focus)!important;outline-offset:3px!important}::selection{background:#376e99;color:#fff}
+/* Navigation system */
+nav.nav,nav.navegacion-modulos{position:relative;display:flex!important;flex-wrap:wrap;gap:9px!important;padding:10px!important;margin:18px 0 25px!important;background:rgba(19,35,52,.86)!important;border:1px solid var(--ui-border)!important;border-radius:16px!important;box-shadow:0 10px 30px rgba(0,0,0,.1);backdrop-filter:blur(12px)}
+nav.nav a,nav.navegacion-modulos a{display:inline-flex!important;align-items:center;justify-content:center;gap:8px;padding:12px 16px!important;border:1px solid transparent!important;border-radius:10px!important;background:transparent!important;color:#c1d2e3!important;text-decoration:none!important;font-weight:700!important;font-size:13px!important;min-height:44px}
+nav.nav a:hover,nav.navegacion-modulos a:hover{background:#21374d!important;color:#fff!important}
+nav.nav a.active,nav.navegacion-modulos a.activo{background:linear-gradient(135deg,#23557c,#1c4263)!important;color:#f6fbff!important;border-color:#5087ae!important;box-shadow:inset 0 1px rgba(255,255,255,.12),0 4px 14px #0002}
+/* Hero and panels */
+.hero,.scada-hero{border:1px solid #36536d!important;background:linear-gradient(120deg,#1b344b 0%,#14283d 55%,#102237 100%)!important;border-radius:22px!important;box-shadow:0 18px 42px rgba(0,0,0,.16)!important}
+.hero{padding:clamp(22px,3vw,38px)!important}.hero h1,.scada-hero h1{font-weight:780;line-height:1.15}.hero p,.scada-hero p{color:#c2d2e2!important}
+.panel,.metric,.kpi,.resumen-card,.plc,.alarm-center{border-color:#30465d!important;box-shadow:0 8px 26px rgba(0,0,0,.11)!important}
+.panel{background:linear-gradient(160deg,rgba(22,38,55,.96),rgba(16,29,44,.96))!important;border-radius:18px!important;padding:clamp(18px,2vw,26px)!important}
+.metric,.kpi,.resumen-card{background:linear-gradient(155deg,#1b3146,#142438)!important;border-radius:17px!important}
+.metric:hover,.kpi:hover,.resumen-card:hover,.plc:hover{border-color:#587c9b!important;transform:translateY(-2px);box-shadow:0 14px 30px rgba(0,0,0,.16)!important}
+.metric strong,.kpi strong,.resumen-valor{font-variant-numeric:tabular-nums;letter-spacing:-.04em}
+/* Calm, readable operational data */
+.muted,.mini-note,.footnote,.resumen-nota,.etiqueta{color:var(--ui-muted)!important}small{line-height:1.5}table{border-collapse:separate!important;border-spacing:0!important}thead th{position:sticky;top:0;z-index:1;background:#1e354b!important;color:#d3e2f0!important}tbody tr:nth-child(even){background:rgba(113,158,193,.035)}tbody tr:hover{background:rgba(113,158,193,.11)!important}td,th{line-height:1.55!important}input,select{accent-color:#78bdec}input:not([type=checkbox]),select{border-radius:10px!important}input:focus,select:focus{border-color:#8ecbff!important;box-shadow:0 0 0 3px rgba(142,203,255,.16)!important}
+/* Page identity and practical assistance */
+.ui-pagebar{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin:0 0 20px;padding:12px 17px;background:rgba(17,33,49,.84);border:1px solid #30465c;border-radius:13px;color:#c1d1e1;font-size:12px}
+.ui-pagebar .ui-crumb{display:flex;align-items:center;gap:9px;font-weight:700}.ui-pagebar .ui-crumb b{color:#f1f8ff}.ui-pagebar .ui-clock{font-variant-numeric:tabular-nums;color:#c0d0df}.ui-pagebar .ui-live{display:inline-block;width:8px;height:8px;border-radius:50%;background:#77d8bc;box-shadow:0 0 0 4px rgba(119,216,188,.1)}
+.ui-footer{max-width:1550px;margin:14px auto 36px;padding:17px clamp(16px,3vw,35px);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#9fb6c9;font-size:12px;border-top:1px solid #2b4258}.ui-footer strong{color:#d8e8f6}
+.ui-reveal{animation:ui-appear .42s ease-out both}@keyframes ui-appear{from{opacity:.45;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+/* Reduce attention fatigue: no constant pulsing or blinking */
+.scada-live-dot,.dot{animation:none!important} .plc,.panel,.resumen-card{transition:border-color .22s ease,box-shadow .22s ease,transform .22s ease}
+@media(max-width:720px){nav.nav,nav.navegacion-modulos{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px!important}nav.nav a,nav.navegacion-modulos a{padding:10px!important;font-size:12px!important;text-align:center}main{padding-left:14px!important;padding-right:14px!important}.ui-pagebar{align-items:flex-start}.ui-clock{width:100%}.ui-footer{padding:15px}}
+@media(max-width:430px){nav.nav,nav.navegacion-modulos{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation:none!important;transition:none!important;transform:none!important}}
+
+/* Fase 7.1 — densidad cómoda, prioridades operativas y respuesta a cambios */
+.dispositivos{gap:14px!important;align-items:stretch}
+.plc{border-radius:16px!important;background:linear-gradient(165deg,#172b3e,#101f30 76%)!important}
+.plc-cabecera{min-height:0!important;padding:15px 16px 13px!important;gap:12px!important}
+.plc-nombre{font-size:18px!important;line-height:1.2!important}
+.plc-modelo{font-size:12px!important;line-height:1.45!important}
+.plc-modo{margin-top:8px!important;font-size:10px!important;letter-spacing:0!important}
+.plc-contenido{padding:14px 16px!important}
+.plc .plc-datos-principales{gap:10px!important}
+.plc .plc-datos-principales .dato{padding:9px 10px!important;margin:0!important;border:1px solid #263d52!important;border-radius:10px!important;background:#0d1d2d!important;min-width:0}
+.plc .plc-datos-principales .dato-label{font-size:10px!important;line-height:1.45!important;letter-spacing:.02em!important;color:#b8cadb!important}
+.plc .plc-datos-principales .dato-valor{font-size:12px!important;line-height:1.4!important;overflow-wrap:anywhere}
+.plc .cronometro{font-size:12px!important;letter-spacing:0!important}
+.plc .indicador{max-width:54%;min-height:31px!important;padding:7px 10px!important;border-radius:99px!important}
+.plc-detalles{margin-top:12px!important}
+.plc-detalles>summary{min-height:38px!important;font-size:12px!important}
+.plc:focus-within{border-color:#7ca9c9!important}
+.plc.ui-status-changed{animation:ui-change-outline 1.4s ease-out 1!important}
+@keyframes ui-change-outline{0%{box-shadow:0 0 0 0 rgba(131,195,244,.4)}45%{box-shadow:0 0 0 5px rgba(131,195,244,.14)}100%{box-shadow:0 8px 26px rgba(0,0,0,.11)}}
+/* Notification center: informative, not an industrial acknowledgment system */
+.ui-notify{position:fixed;right:20px;bottom:20px;z-index:1000;width:min(370px,calc(100vw - 32px));font-family:inherit}
+.ui-notify-toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:13px 16px;border-radius:14px;border:1px solid #456680;background:#1b344b;color:#f1f8ff;box-shadow:0 16px 38px #0007;font-weight:750;text-align:left}
+.ui-notify-toggle:hover{background:#25445f}
+.ui-notify-count{background:#f2c37c;color:#152334;border-radius:99px;min-width:24px;height:24px;display:grid;place-items:center;padding:0 6px;font-size:12px}
+.ui-notify-panel{margin-bottom:10px;background:#132639;border:1px solid #46617b;border-radius:16px;box-shadow:0 20px 52px #0009;overflow:hidden;max-height:min(70vh,560px);display:flex;flex-direction:column}
+.ui-notify-panel[hidden]{display:none!important}
+.ui-notify-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:15px 16px;border-bottom:1px solid #344d63}
+.ui-notify-head strong{font-size:15px}.ui-notify-head small{display:block;margin-top:4px;color:#bed0df;font-size:11px}
+.ui-notify-close,.ui-notify-action{background:#213a51;color:#e9f3fa;border:1px solid #42617b;border-radius:9px;padding:8px 10px;cursor:pointer;font-size:12px}
+.ui-notify-items{padding:10px;overflow:auto;display:grid;gap:8px}
+.ui-notify-item{border:1px solid #38526a;background:#192e42;border-radius:10px;padding:11px 12px}
+.ui-notify-item[data-severity="critical"]{border-left:4px solid #f08d9b}
+.ui-notify-item[data-severity="warning"]{border-left:4px solid #f3c578}
+.ui-notify-item[data-severity="good"]{border-left:4px solid #79d9b8}
+.ui-notify-item strong{display:block;font-size:12px;color:#f2f8fd}.ui-notify-item p{font-size:12px;color:#c4d5e3;line-height:1.5;margin:5px 0 8px}
+.ui-notify-item time{color:#9fb8cc;font-size:11px}.ui-notify-item .ui-notify-action{margin-left:8px}
+.ui-notify-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:11px 13px;border-top:1px solid #344d63}
+.ui-notify-foot a{font-size:12px;color:#a5d8ff}
+.ui-notify-empty{color:#c0d2df;font-size:12px;padding:18px}
+@media(max-width:720px){.ui-notify{right:12px;bottom:12px}.plc-cabecera{padding:14px!important}.plc-contenido{padding:12px!important}}
+@media(prefers-reduced-motion:reduce){.plc.ui-status-changed{animation:none!important}}
+
+/* =============================================================
+   PLATAFORMAFINAL · FASE 7.2
+   Capa visual operativa: densidad cómoda, lectura rápida y calma.
+   Sin animaciones permanentes, sin colores que simulen estados.
+   ============================================================= */
+:root {
+  --ui-surface-0: #0c1623;
+  --ui-surface-1: #132336;
+  --ui-surface-2: #1a2e42;
+  --ui-border-soft: #30475d;
+  --ui-ink: #edf4fc;
+  --ui-secondary: #bdcede;
+  --ui-positive: #74d9bc;
+  --ui-caution: #f2c785;
+  --ui-negative: #f09ca7;
+}
+body {background:radial-gradient(ellipse 80% 35% at 46% -9%,rgba(59,110,158,.13),transparent),#0c1623!important}
+body::before {opacity:.35}
+main {max-width:1650px!important;padding-top:17px!important}
+header:not(.hero) {box-shadow:none}
+.ui-pagebar {padding:10px 16px;margin-bottom:15px;border-color:#31485e;background:#15273a;font-size:12px}
+.ui-pagebar .ui-live {background:#92adc4;box-shadow:0 0 0 3px #92adc41a}
+.ui-footer {border-color:#2d4053}
+nav.nav,nav.navegacion-modulos {margin:12px 0 21px!important;gap:6px!important;padding:8px!important;box-shadow:none;border-radius:13px!important;background:#15273a!important}
+nav.nav a,nav.navegacion-modulos a {padding:10px 14px!important;border-radius:9px!important;font-weight:650!important}
+nav.nav a.active,nav.navegacion-modulos a.activo {background:#275071!important;border-color:#4b7e9e!important;box-shadow:none}
+.hero,.scada-hero {box-shadow:none!important;background:linear-gradient(115deg,#1b354a,#13253a 65%,#112436)!important;border:1px solid #344f66!important}
+.scada-hero {padding:clamp(19px,2.5vw,29px)!important;margin-bottom:24px!important}
+.scada-hero h1 {font-size:clamp(24px,3vw,34px)!important;letter-spacing:-.05em!important}
+.scada-hero p {font-size:13px!important;line-height:1.55!important;margin-top:10px!important}
+.scada-hero-footer {align-items:center!important;gap:10px!important;margin-top:15px!important}
+.scada-hero-footer span {font-size:10px!important;color:#b1cbe0!important}
+.ui-hero-link {margin-left:auto;color:#c1e5ff;text-decoration:none;font-weight:700;font-size:11px;padding:7px 10px;border:1px solid #496881;border-radius:8px;background:#24405a}
+.ui-hero-link:hover {background:#305574}
+.encabezado-seccion {margin-bottom:11px!important}
+.encabezado-seccion h2 {font-size:16px!important;letter-spacing:-.025em!important}
+/* Primary operational indicators */
+.resumen {gap:12px!important;margin-bottom:23px!important}
+.resumen-card {padding:17px 19px!important;border-radius:14px!important;background:linear-gradient(145deg,#1b3045,#16283a)!important;box-shadow:none!important;min-height:116px!important}
+.resumen-card::before {height:3px!important;opacity:.75}
+.resumen-titulo {font-size:11px!important;letter-spacing:.08em!important;color:#aec4d7!important}
+.resumen-valor {margin-top:12px!important;font-size:33px!important;line-height:1.15!important;letter-spacing:-.045em!important}
+.resumen-nota {font-size:12px!important;margin-top:8px!important;line-height:1.5!important;color:#bfd0e0!important}
+.resumen-card[data-frescura="ok"]:nth-child(4) .resumen-nota {color:#9fe4cf!important}
+.resumen-card[data-frescura="error"]:nth-child(4) {border-color:#a36973!important}
+.resumen-card[data-frescura="error"] .resumen-nota {color:#ffbdc4!important}
+/* Active alarm overview: default compact, expandable on demand */
+.alarm-center {margin:0 0 25px!important;padding:18px 21px!important;border-radius:16px!important;background:linear-gradient(125deg,#182b3e,#122233)!important;box-shadow:none!important}
+.alarm-head h2 {font-size:20px!important;margin-top:2px!important}
+.alarm-head p {font-size:12px!important;color:#bdd0df!important}
+.alarm-eyebrow {font-size:10px!important;letter-spacing:.11em!important;color:#9bb5c8!important}
+.alarm-count {font-size:12px!important;padding:2px 9px!important}
+.alarm-link {background:#223c55;padding:9px 12px!important;font-size:12px!important}
+.alarm-toolbar {display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-top:14px}
+.alarm-hint {font-size:11px;color:#a8bfd1;line-height:1.45}
+.alarm-expand,.alarm-go {border:1px solid #50708c;border-radius:9px;background:#27455d;color:#d8edff;font-weight:700;font-size:12px;padding:8px 11px;cursor:pointer}
+.alarm-expand:hover,.alarm-go:hover {background:#345d7a;border-color:#729fbc}
+.alarm-expand[hidden] {display:none!important}
+.alarm-items {margin-top:11px!important;gap:7px!important}
+.alarm-row {grid-template-columns:8px minmax(0,1fr) auto!important;gap:11px!important;padding:11px 13px!important;border-radius:10px!important;background:#1a2e42!important;border-color:#31495f!important}
+.alarm-row .alarm-dot {width:8px;height:8px}
+.alarm-body {min-width:0}
+.alarm-row .alarm-name {font-size:12.5px!important;line-height:1.4;letter-spacing:0}
+.alarm-row .alarm-description {font-size:11.5px!important;line-height:1.45!important;color:#b9cbd9!important;margin:3px 0 0!important}
+.alarm-actions {display:flex;align-items:center;gap:11px;flex-wrap:wrap;justify-content:flex-end}
+.alarm-level {font-size:10px!important;white-space:nowrap}
+.alarm-go {font-size:11px;padding:7px 10px;min-height:32px;white-space:nowrap}
+.alarm-foot {border-top:1px solid #2d4457;padding-top:11px;margin-top:12px!important;color:#9db4c6!important}
+.alarm-empty {padding:14px!important;background:#14293b!important;font-size:12px!important}
+.alarm-empty.good {background:#17382e!important}
+/* Search, filters and PLC cards */
+.herramientas-plc {background:#13263a!important;border-color:#31475e!important;padding:13px 15px!important;border-radius:13px!important;gap:11px!important;margin-bottom:15px!important}
+.herramientas-plc label {font-size:11px!important;color:#bacde0!important;font-weight:650}
+.herramientas-plc input,.herramientas-plc select {min-height:41px!important;font-size:12px!important;background:#0e1f30!important;border:1px solid #39516a!important;color:#e8f2f9!important}
+.resultado-filtro {color:#b1c8dc!important;font-size:12px!important}
+.dispositivos {gap:13px!important}
+.plc {border-radius:14px!important;border-color:#344a5e!important;background:#132536!important;box-shadow:none!important;transition:border-color .2s ease,background-color .2s ease,box-shadow .2s ease!important;scroll-margin-top:25px}
+.plc:hover {transform:none!important;border-color:#6488a5!important;box-shadow:0 5px 22px #0002!important}
+.plc::before {height:3px!important;opacity:.8}
+.plc-cabecera {padding:14px 15px 12px!important;min-height:98px!important;border-bottom:1px solid #2e455b!important;background:linear-gradient(135deg,#1b3145,#172b3f)!important}
+.plc-fabricante {font-size:10px!important;margin-bottom:5px!important;letter-spacing:.08em!important}
+.plc-nombre {font-size:19px!important;letter-spacing:-.035em!important;line-height:1.18!important}
+.plc-modelo {margin-top:3px!important;font-size:11px!important;line-height:1.35!important;color:#bdd1e0!important}
+.plc-modo {margin-top:6px!important;padding:3px 7px!important;background:#ffffff05!important;border-color:#344d61!important;font-size:9px!important;letter-spacing:.015em!important;border-radius:6px!important}
+.plc .indicador {margin-top:0;max-width:54%!important;padding:7px 10px!important;min-height:32px!important;border-radius:99px!important;background:#0f2233!important;border-color:#344f64!important;font-size:10px!important;letter-spacing:0!important}
+.plc .punto {box-shadow:0 0 0 3px rgba(145,184,203,.08)!important}
+.plc-contenido {padding:12px 15px 13px!important}
+.plc .plc-datos-principales {display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px!important}
+.plc .plc-datos-principales .dato {display:flex!important;flex-direction:column;align-items:flex-start!important;justify-content:center;min-width:0;margin:0!important;padding:9px 10px!important;border:1px solid #2c4256!important;border-radius:9px!important;background:#0e2031!important;gap:5px!important;min-height:57px!important}
+.plc .plc-datos-principales .dato:first-child {grid-column:1/-1;min-height:48px!important}
+.plc .plc-datos-principales .dato-label {flex:none!important;width:auto!important;max-width:100%!important;font-size:10px!important;letter-spacing:.012em!important;text-transform:uppercase;color:#b4c9d9!important;line-height:1.35!important}
+.plc .plc-datos-principales .dato-valor {text-align:left!important;font-size:12px!important;line-height:1.35!important;max-width:100%!important;min-width:0!important;overflow-wrap:anywhere;font-weight:750!important}
+.plc .plc-datos-principales .cronometro {font-size:12px!important;color:#99d3ff!important;letter-spacing:-.02em!important}
+.plc .plc-datos-principales .estado-modo {font-weight:800!important}
+.plc-detalles {margin-top:10px!important;border-color:#2e465c!important}
+.plc-detalles>summary {padding:10px 2px 0!important;min-height:32px!important;font-size:11.5px!important;color:#a5d7fb!important}
+.plc-detalles-contenido {background:#0e2031!important;margin-top:8px!important;padding:10px 12px!important}
+/* On-demand focus/highlight lasts briefly; never pulses continuously */
+.plc.ui-locate {outline:3px solid #8bceff!important;outline-offset:3px!important;box-shadow:0 0 0 8px #8bceff16!important}
+.plc.ui-status-changed {animation:ui-plc-event 1.45s ease-out 1!important}
+@keyframes ui-plc-event {0%{outline:3px solid #7ac2f7;outline-offset:3px;background:#29475f}100%{outline:0 solid transparent;outline-offset:0;background:#132536}}
+/* Notifications: floating but not intrusive; distinguish current vs new */
+.ui-notify {bottom:17px;right:17px;width:min(380px,calc(100vw - 30px));z-index:1100}
+.ui-notify-toggle {padding:12px 14px;gap:9px;border-radius:13px;background:#203b53;border-color:#56758f;box-shadow:0 12px 30px #0005}
+.ui-notify-title {font-size:12px;white-space:nowrap}
+.ui-notify-summary {font-size:11px;color:#c0d2df;font-weight:500;text-align:right;flex:1}
+.ui-notify-count {flex:0 0 auto;min-width:23px;height:23px}
+.ui-notify-count[hidden] {display:none!important}
+.ui-notify-toggle[data-pendientes="si"] {border-color:#cfaa72}
+.ui-notify-panel {background:#14283b;box-shadow:0 18px 45px #0009;max-height:min(67vh,580px)}
+.ui-notify-item {padding:12px;background:#1b3043}
+.ui-notify-item.ui-notify-new {background:#233b50}
+.ui-notify-row-actions {display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:8px}
+.ui-notify-row-actions time {margin-right:auto}
+.ui-notify-item .ui-notify-action {margin:0!important}
+.ui-notify-attention {animation:ui-notice .8s ease-out 1}
+@keyframes ui-notice {0%{box-shadow:0 0 0 0 #f4c58155}75%{box-shadow:0 0 0 8px #f4c58108}100%{box-shadow:0 12px 30px #0005}}
+.ui-data-stale {position:fixed;top:12px;right:18px;z-index:1080;max-width:min(420px,calc(100vw - 36px));padding:10px 13px;border-radius:10px;border:1px solid #aa7c4e;background:#583a22;color:#fff0db;font-size:12px;line-height:1.5;box-shadow:0 7px 18px #0006}
+/* Apply visual rhythm to secondary modules without changing their behavior */
+.panel {border-radius:15px!important;border-color:#334b61!important;box-shadow:none!important}
+.metric,.kpi {box-shadow:none!important;border-radius:14px!important}
+.metric:hover,.kpi:hover,.resumen-card:hover {transform:none!important;box-shadow:none!important;border-color:#567a95!important}
+.field, .filters label, .controls label {line-height:1.6}
+.tablewrap {border-radius:12px;scrollbar-color:#476880 #152638}
+.tablewrap table {font-size:12px}
+.tablewrap th {background:#20384e!important;font-weight:700}
+.tablewrap td {border-color:#2c4258!important}
+button:disabled {cursor:not-allowed!important}
+@media (max-width:1200px){.plc .indicador{max-width:58%!important}}
+@media (max-width:820px){.alarm-row{grid-template-columns:8px minmax(0,1fr)!important}.alarm-actions{grid-column:2;justify-content:flex-start}.alarm-center{padding:16px!important}.resumen{gap:10px!important}}
+@media (max-width:600px){
+ main{padding-top:12px!important}
+ .scada-hero-footer{flex-wrap:wrap}
+ .ui-hero-link{margin:0}
+ .resumen-card{padding:15px!important;min-height:104px!important}
+ .resumen-valor{font-size:29px!important}
+ .plc .indicador{max-width:100%!important}
+ .plc-cabecera{flex-wrap:wrap;min-height:0!important}
+ .plc .plc-datos-principales{gap:8px!important}
+ .alarm-row{padding:10px!important}
+ .ui-notify-toggle{flex-wrap:wrap}
+ .ui-notify-summary{text-align:left}
+ .ui-notify-foot{flex-wrap:wrap}
+}
+@media (max-width:380px){.plc .plc-datos-principales{grid-template-columns:1fr!important}}
+@media (prefers-reduced-motion:reduce){
+ html{scroll-behavior:auto!important}
+ .plc.ui-status-changed,.ui-notify-attention{animation:none!important}
+ .ui-reveal{animation:none!important}
+ .plc,.plc:hover,.resumen-card{transform:none!important}
+}
+
+/* =============================================================
+   FASE 7.3 · INTERFAZ CALMA + CENTRO GLOBAL DE AVISOS
+   Diseño accesible en los cuatro módulos, sin efectos persistentes.
+   ============================================================= */
+:root { --ui-anim-fast:180ms; --ui-anim-normal:290ms; }
+.ui-pagebar {border-radius:14px;box-shadow:inset 0 1px rgba(255,255,255,.04)}
+.ui-pagebar .ui-crumb {min-width:0;flex-wrap:wrap}
+.ui-pagebar .ui-clock {font-size:12px;color:#c4d7e7}
+nav.nav a,nav.navegacion-modulos a {position:relative;transition:background var(--ui-anim-fast) ease,border-color var(--ui-anim-fast) ease,color var(--ui-anim-fast) ease,transform var(--ui-anim-fast) ease!important}
+nav.nav a:hover,nav.navegacion-modulos a:hover {transform:translateY(-1px)}
+nav.nav a:focus-visible,nav.navegacion-modulos a:focus-visible {outline:2px solid #a6d8ff!important;outline-offset:3px!important}
+.hero,.scada-hero {position:relative;overflow:hidden}
+.hero::after,.scada-hero::after {content:"";pointer-events:none;position:absolute;right:-8%;top:-75%;width:40%;height:190%;transform:rotate(24deg);background:linear-gradient(90deg,transparent,rgba(137,190,233,.035),transparent)}
+.resumen-card,.metric,.kpi,.panel,.alarm-center,.plc {transition:border-color var(--ui-anim-normal) ease,background var(--ui-anim-normal) ease,box-shadow var(--ui-anim-normal) ease,transform var(--ui-anim-normal) ease!important}
+.resumen-card:hover,.metric:hover,.kpi:hover,.plc:hover {transform:translateY(-2px)!important}
+button,.btn,.ui-notify-action,.alarm-go,.alarm-expand {transition:background var(--ui-anim-fast) ease,border-color var(--ui-anim-fast) ease,box-shadow var(--ui-anim-fast) ease,transform var(--ui-anim-fast) ease}
+button:not(:disabled):active,.btn:not(:disabled):active {transform:translateY(1px)}
+button:focus-visible,a:focus-visible {outline:2px solid #a5d6ff;outline-offset:3px}
+/* Entrada única al entrar al área visible: nada permanece en movimiento */
+.ui-entrance.ui-entered {animation:ui-soft-rise .46s cubic-bezier(.2,.7,.2,1) var(--ui-delay,0ms) both}
+.ui-card-enter {animation:ui-soft-rise .44s cubic-bezier(.2,.7,.2,1) var(--ui-delay,0ms) both}
+@keyframes ui-soft-rise {from {opacity:.45;transform:translateY(9px)}to {opacity:1;transform:translateY(0)}}
+/* Los PLC siguen siendo identificables incluso cuando hay muchas tarjetas */
+.plc {scroll-margin:90px}
+.plc .plc-nombre {letter-spacing:-.025em}
+.plc .plc-contenido {line-height:1.5}
+.plc .dato-valor,.plc .cronometro {font-variant-numeric:tabular-nums}
+.plc.ui-status-changed {animation:ui-change-once 1.4s ease-out!important}
+@keyframes ui-change-once {0%{outline:3px solid rgba(151,202,243,.8);outline-offset:2px}100%{outline:0 solid transparent;outline-offset:0}}
+/* Centro disponible desde Supervisión, Horómetro, Eventos y Reportes */
+.ui-notify {z-index:1500;width:min(425px,calc(100vw - 32px));bottom:18px;right:18px}
+.ui-notify-toggle {background:#213b51!important;border:1px solid #56758d!important;border-radius:14px!important;padding:12px 15px!important;box-shadow:0 12px 32px rgba(0,0,0,.4)!important;min-height:52px;cursor:pointer}
+.ui-notify-toggle:hover {background:#294960!important;border-color:#7ba1bd!important}
+.ui-notify-toggle[data-activas="si"] {border-left:3px solid #e8a2a9!important}
+.ui-notify-title {font-size:13px!important;font-weight:800;white-space:nowrap}
+.ui-notify-summary {font-size:12px!important;color:#d4e1ee!important;white-space:normal}
+.ui-notify-count {border-radius:9px;background:#f0c782;color:#182437}
+.ui-notify-panel {border:1px solid #54718a!important;max-height:min(76vh,690px)!important;background:#15293c!important;box-shadow:0 25px 70px #0009!important;animation:ui-panel-enter .23s cubic-bezier(.2,.7,.2,1)}
+@keyframes ui-panel-enter {from{opacity:.7;transform:translateY(7px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+.ui-notify-head {padding:16px 18px!important}
+.ui-notify-head strong {font-size:17px!important}
+.ui-notify-head small {font-size:12px!important;line-height:1.45}
+.ui-notify-health {font-size:11px;color:#bed2e3;line-height:1.5;padding:9px 17px;background:#172e41;border-bottom:1px solid #354d63}
+.ui-notify-health[data-http="ok"]::before {content:"●";color:#76dabc;margin-right:8px}
+.ui-notify-health[data-http="error"] {color:#ffd0d3;background:#402b39}
+.ui-notify-health[data-http="error"]::before {content:"●";color:#ffa7af;margin-right:8px}
+.ui-notify-health[data-http="detenido"] {color:#f2d69d}
+.ui-notify-tabs {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));padding:10px 12px 0;gap:7px}
+.ui-notify-tab {font:inherit;font-size:11px;font-weight:750;min-height:38px;padding:7px 9px;border:1px solid #38566f;color:#b8d0e3;background:#1b3349;border-radius:9px;cursor:pointer}
+.ui-notify-tab[aria-selected="true"] {color:#f1f8ff;border-color:#74a8cd;background:#2a4b65;box-shadow:inset 0 1px rgba(255,255,255,.06)}
+.ui-notify-items {padding:12px!important;gap:9px!important;min-height:86px;overscroll-behavior:contain}
+.ui-notify-item {background:#1a3246!important;border-radius:11px!important;padding:12px 13px!important}
+.ui-notify-item[data-severity="critical"] {border-left-color:#f09ca7!important}
+.ui-notify-item[data-severity="warning"] {border-left-color:#f0c782!important}
+.ui-notify-item[data-severity="good"] {border-left-color:#74d9bc!important}
+.ui-notify-item strong {font-size:13px!important;line-height:1.4}
+.ui-notify-item p {font-size:12px!important;margin:6px 0 9px!important;color:#c6d7e5!important}
+.ui-notify-item.ui-notify-new {background:#253c51!important}
+.ui-notify-row-actions {margin-top:10px!important}
+.ui-notify-action {min-height:33px;min-width:65px;cursor:pointer}
+.ui-notify-action:disabled {opacity:.55;cursor:default}
+.ui-notify-go {background:#265371;color:#f6fbff;border-color:#4a85ac;font-weight:750}
+.ui-notify-go:hover {background:#316587}
+.ui-notify-empty {line-height:1.65;font-size:12px!important}
+.ui-notify-all-clear {color:#a9e4d0!important}
+.ui-notify-foot {gap:10px!important}
+.ui-notify-foot a {text-decoration:underline;text-decoration-color:#4b7394;text-underline-offset:3px}
+.ui-notify-attention {animation:ui-notify-new 1.05s ease-out 1!important}
+@keyframes ui-notify-new {0%{box-shadow:0 0 0 0 rgba(235,185,119,.42)}60%{box-shadow:0 0 0 7px rgba(235,185,119,.05)}100%{box-shadow:0 12px 32px rgba(0,0,0,.4)}}
+/* Toast no bloqueante: visible únicamente ante una novedad detectada. */
+.ui-notify-toast {display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:10px;background:#203c51;border:1px solid #6383a0;border-left:4px solid #f1cc91;border-radius:13px;padding:12px;margin-bottom:10px;box-shadow:0 16px 40px #0008;animation:ui-panel-enter .28s ease-out}
+.ui-notify-toast[hidden] {display:none!important}
+.ui-notify-toast[data-severity="critical"]{border-left-color:#f09ca7}
+.ui-notify-toast[data-severity="good"]{border-left-color:#72d6b5}
+.ui-notify-toast strong {display:block;font-size:12px;color:#fff}
+.ui-notify-toast small {display:block;margin-top:4px;font-size:11px;line-height:1.45;color:#d0dfe9}
+.ui-notify-toast-close {background:transparent;border:0;color:#d9e9f5;font-size:22px;cursor:pointer;padding:2px 7px}
+@media(max-width:720px){
+ .ui-notify {right:10px;bottom:10px;width:calc(100vw - 20px)}
+ .ui-notify-toggle {min-height:48px}
+ .ui-notify-panel {max-height:min(72vh,630px)!important}
+ .ui-notify-row-actions {gap:6px!important}
+ .ui-notify-toast {gap:7px;padding:10px}
+ .ui-notify-toast .ui-notify-action {min-width:0}
+}
+@media(prefers-reduced-motion:reduce){
+ .ui-entrance.ui-entered,.ui-card-enter,.plc.ui-status-changed,.ui-notify-panel,.ui-notify-attention,.ui-notify-toast {animation:none!important}
+ nav.nav a,nav.navegacion-modulos a,.metric,.kpi,.resumen-card,.plc {transform:none!important}
+}
+
+
+/* Fase 7.4 · refinamiento visual y eliminación de duplicidad */
+.scada-hero,.resumen-card,.plc,.herramientas-plc,.navegacion-modulos{position:relative;overflow:hidden}
+.scada-hero::after,.resumen-card::after,.plc::after,.herramientas-plc::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 0%,rgba(255,255,255,.03) 28%,transparent 52%);transform:translateX(-120%);pointer-events:none;opacity:.9}
+.scada-hero:hover::after,.resumen-card:hover::after,.plc:hover::after,.herramientas-plc:hover::after{animation:ui-sheen 1.05s ease 1}
+@keyframes ui-sheen{from{transform:translateX(-120%)}to{transform:translateX(130%)}}
+
+.navegacion-modulos .enlace-modulo{transform:translateY(0);box-shadow:0 0 0 rgba(0,0,0,0)}
+.navegacion-modulos .enlace-modulo:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.18)}
+.navegacion-modulos .enlace-modulo.activo{box-shadow:0 8px 22px rgba(44,133,206,.18)}
+
+.herramientas-plc{border:1px solid #31495f;border-radius:16px;padding:14px 16px;background:linear-gradient(135deg,rgba(24,43,61,.95),rgba(18,35,49,.95));box-shadow:0 12px 30px rgba(0,0,0,.12)}
+.herramientas-plc input,.herramientas-plc select{transition:border-color var(--ui-anim-fast) ease,box-shadow var(--ui-anim-fast) ease,transform var(--ui-anim-fast) ease}
+.herramientas-plc input:focus,.herramientas-plc select:focus{transform:translateY(-1px);box-shadow:0 0 0 3px rgba(122,176,219,.12)}
+
+.ui-notify-toggle[data-pendientes="si"]{animation:ui-soft-pulse 2.8s ease-in-out infinite}
+.ui-notify-toggle[data-pendientes="si"]:hover{animation-play-state:paused}
+@keyframes ui-soft-pulse{0%,100%{box-shadow:0 12px 32px rgba(0,0,0,.4)}50%{box-shadow:0 12px 36px rgba(238,191,124,.22)}}
+.body-freeze{overflow:hidden}
+body.ui-overlay-open::before{content:"";position:fixed;inset:0;background:radial-gradient(circle at bottom right, rgba(17,31,46,.15), rgba(10,18,28,.38));pointer-events:none;z-index:1400}
+.ui-notify-panel{transform-origin:bottom right}
+.ui-notify-items.ui-tab-refresh{animation:ui-tab-swap .24s ease}
+@keyframes ui-tab-swap{from{opacity:.68;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.ui-notify-item{transition:transform var(--ui-anim-fast) ease,box-shadow var(--ui-anim-fast) ease,background var(--ui-anim-fast) ease}
+.ui-notify-item:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(0,0,0,.16)}
+.ui-notify-item.ui-notify-fresh{animation:ui-fresh-item .55s ease}
+@keyframes ui-fresh-item{from{opacity:.45;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.ui-notify-go{position:relative;overflow:hidden}
+.ui-notify-go::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent,rgba(255,255,255,.13),transparent);transform:translateX(-120%)}
+.ui-notify-go:hover::after{animation:ui-sheen .9s ease 1}
+
+.plc.ui-locate{animation:ui-locate-pulse 1.8s ease-out 1!important}
+@keyframes ui-locate-pulse{0%{box-shadow:0 0 0 0 rgba(121,193,255,.28);transform:translateY(0)}35%{box-shadow:0 0 0 9px rgba(121,193,255,.10);transform:translateY(-2px)}100%{box-shadow:0 0 0 0 rgba(121,193,255,0);transform:translateY(0)}}
+
+@media (prefers-reduced-motion: reduce){
+  .ui-notify-toggle[data-pendientes="si"],.ui-notify-items.ui-tab-refresh,.ui-notify-item.ui-notify-fresh,.plc.ui-locate,.scada-hero:hover::after,.resumen-card:hover::after,.plc:hover::after,.herramientas-plc:hover::after,.ui-notify-go:hover::after{animation:none!important}
+  .navegacion-modulos .enlace-modulo:hover,.ui-notify-item:hover,.resumen-card:hover,.metric:hover,.kpi:hover,.plc:hover{transform:none!important}
+}
+
+
+/* Fase 7.5 · animaciones refinadas y persistencia visual del centro de avisos */
+.ui-notify-items{scroll-behavior:smooth;overscroll-behavior:contain;padding-right:4px}
+.ui-notify-items::-webkit-scrollbar{width:10px}
+.ui-notify-items::-webkit-scrollbar-track{background:rgba(12,23,34,.55);border-radius:999px}
+.ui-notify-items::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#43637f,#638aad);border-radius:999px;border:2px solid rgba(12,23,34,.65)}
+.ui-notify-items::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,#567b9b,#76a2ca)}
+
+.ui-notify-panel::before{content:"";position:absolute;inset:0 0 auto 0;height:1px;background:linear-gradient(90deg,transparent,rgba(123,195,255,.55),transparent);opacity:.85;pointer-events:none}
+.ui-notify-head strong,.ui-notify-title{letter-spacing:.01em}
+.ui-notify-summary{transition:opacity var(--ui-anim-fast,220ms) ease,transform var(--ui-anim-fast,220ms) ease}
+.ui-notify-toggle:hover .ui-notify-summary{transform:translateX(1px)}
+.ui-notify-count{transition:transform var(--ui-anim-fast,220ms) ease,box-shadow var(--ui-anim-fast,220ms) ease}
+.ui-notify-toggle[data-pendientes="si"] .ui-notify-count{box-shadow:0 0 0 4px rgba(239,191,122,.11)}
+
+.ui-notify-item{position:relative;overflow:hidden}
+.ui-notify-item::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent,rgba(255,255,255,.05),transparent);transform:translateX(-130%);pointer-events:none}
+.ui-notify-item:hover::after{animation:ui-sheen 1s ease 1}
+
+.plc{transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, filter .18s ease}
+.plc.ui-plc-flash-critical{animation:ui-plc-critical 1.75s cubic-bezier(.22,.75,.2,1) 1}
+.plc.ui-plc-flash-warning{animation:ui-plc-warning 1.65s cubic-bezier(.22,.75,.2,1) 1}
+.plc.ui-plc-flash-good{animation:ui-plc-good 1.55s cubic-bezier(.22,.75,.2,1) 1}
+@keyframes ui-plc-critical{0%{transform:translateY(0);box-shadow:0 0 0 0 rgba(242,128,143,.34)}30%{transform:translateY(-2px);box-shadow:0 0 0 8px rgba(242,128,143,.11)}100%{transform:translateY(0);box-shadow:0 0 0 0 rgba(242,128,143,0)}}
+@keyframes ui-plc-warning{0%{transform:translateY(0);box-shadow:0 0 0 0 rgba(241,193,112,.33)}35%{transform:translateY(-2px);box-shadow:0 0 0 8px rgba(241,193,112,.1)}100%{transform:translateY(0);box-shadow:0 0 0 0 rgba(241,193,112,0)}}
+@keyframes ui-plc-good{0%{transform:translateY(0);box-shadow:0 0 0 0 rgba(84,224,176,.3)}35%{transform:translateY(-2px);box-shadow:0 0 0 8px rgba(84,224,176,.1)}100%{transform:translateY(0);box-shadow:0 0 0 0 rgba(84,224,176,0)}}
+
+.ui-field-flash-critical,.ui-field-flash-warning,.ui-field-flash-good{position:relative;z-index:1;border-radius:10px;animation:ui-field-breathe 1.55s ease 1}
+.ui-field-flash-critical{box-shadow:0 0 0 3px rgba(242,128,143,.16);background:linear-gradient(180deg,rgba(242,128,143,.14),rgba(242,128,143,.04))!important}
+.ui-field-flash-warning{box-shadow:0 0 0 3px rgba(241,193,112,.15);background:linear-gradient(180deg,rgba(241,193,112,.13),rgba(241,193,112,.04))!important}
+.ui-field-flash-good{box-shadow:0 0 0 3px rgba(84,224,176,.13);background:linear-gradient(180deg,rgba(84,224,176,.12),rgba(84,224,176,.03))!important}
+@keyframes ui-field-breathe{0%{transform:translateY(0) scale(1)}40%{transform:translateY(-1px) scale(1.01)}100%{transform:translateY(0) scale(1)}}
+
+.resumen-card:hover .resumen-valor{transform:translateY(-1px);transition:transform .18s ease}
+.ui-pagebar,.ui-footer{backdrop-filter:blur(10px)}
+
+@media (prefers-reduced-motion: reduce){
+  .ui-notify-items{scroll-behavior:auto}
+  .plc.ui-plc-flash-critical,.plc.ui-plc-flash-warning,.plc.ui-plc-flash-good,.ui-field-flash-critical,.ui-field-flash-warning,.ui-field-flash-good,.ui-notify-item:hover::after{animation:none!important}
+}
+
+
+/* =====================================================
+   PLATAFORMAFINAL · Fase 7.6 / Centro de avisos SCADA
+   Sin parpadeo permanente. Prioridades según evidencia.
+   ===================================================== */
+.ui-notify{width:min(484px,calc(100vw - 28px));z-index:1550}
+.ui-notify-panel{
+  position:relative;
+  border-radius:18px!important;
+  background:linear-gradient(150deg,#172d42 0%,#101f30 100%)!important;
+  box-shadow:0 22px 68px rgba(0,0,0,.43),0 2px 10px rgba(32,90,129,.14)!important;
+}
+.ui-notify-head{background:linear-gradient(90deg,rgba(39,77,105,.32),transparent);gap:12px}
+.ui-notify-head strong{letter-spacing:-.02em}
+.ui-notify-health{font-variant-numeric:tabular-nums}
+.ui-notify-tabs{gap:8px;padding:12px 14px 0}
+.ui-notify-tab{border-radius:11px!important;min-height:40px!important;transition:background .19s ease,border-color .19s ease,box-shadow .19s ease,transform .19s ease}
+.ui-notify-tab:hover{background:#284962;border-color:#739ebc}
+.ui-notify-tab[aria-selected="true"]{box-shadow:inset 0 -2px rgba(143,201,239,.25),0 5px 15px rgba(0,0,0,.13)}
+
+/* Scroll estable: actualizar el reloj NO reconstruye la lista; si cambia un
+   estado, JS restablece el desplazamiento inmediatamente, no suavizado. */
+.ui-notify-items{
+  display:block!important;
+  padding:13px!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  min-height:100px;
+  scrollbar-gutter:stable;
+  scroll-behavior:auto!important;
+  overflow-anchor:none;
+}
+.ui-notify-priority-summary{display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:11px 14px 4px}
+.ui-notify-priority-summary[hidden]{display:none!important}
+.ui-notify-priority-chip{display:inline-flex;align-items:center;gap:6px;min-height:27px;padding:5px 9px;border-radius:999px;border:1px solid #36526a;background:rgba(18,38,54,.64);font-size:11px;font-weight:700;color:#b9ccdb;white-space:nowrap;font-variant-numeric:tabular-nums}
+.ui-notify-priority-chip::before{content:"";width:6px;height:6px;border-radius:50%;background:#83a7bd;flex:0 0 auto}
+.ui-notify-priority-chip[data-severity="critical"]{color:#ffb0ba;border-color:#6e4453;background:rgba(125,55,70,.12)}
+.ui-notify-priority-chip[data-severity="critical"]::before{background:#f08f9c}
+.ui-notify-priority-chip[data-severity="warning"]{color:#f3cf91;border-color:#695d46;background:rgba(132,99,48,.13)}
+.ui-notify-priority-chip[data-severity="warning"]::before{background:#e6b86d}
+.ui-notify-priority-chip[data-severity="info"]::before{background:#91c6e8}
+
+.ui-priority-group{display:grid;gap:8px;margin:0 0 20px;min-width:0}
+.ui-priority-group:last-child{margin-bottom:0}
+.ui-priority-group-head{
+  display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:2;
+  padding:8px 10px;border-radius:10px;
+  background:linear-gradient(90deg,#1e3a50 0%,#182d40 100%);
+  border:1px solid #38576e;
+  box-shadow:0 4px 12px rgba(0,0,0,.10);
+}
+.ui-priority-indicator{width:9px;height:9px;flex:0 0 auto;border-radius:50%;background:#9dbacf}
+.ui-priority-group[data-priority="critica"] .ui-priority-indicator{background:#f19aa4;box-shadow:0 0 0 4px rgba(241,154,164,.08)}
+.ui-priority-group[data-priority="atencion"] .ui-priority-indicator{background:#edbd77;box-shadow:0 0 0 4px rgba(237,189,119,.07)}
+.ui-priority-group[data-priority="revision"] .ui-priority-indicator{background:#93bee1}
+.ui-priority-group-head>div{flex:1;min-width:0}
+.ui-priority-group-head strong{display:block;font-size:12px;color:#eef5fb;line-height:1.35}
+.ui-priority-group-head small{display:block;color:#a8c0d3;font-size:10px;line-height:1.5;margin-top:2px}
+.ui-priority-group-count{font-size:11px;font-variant-numeric:tabular-nums;color:#e0edf7;background:#314e65;padding:3px 8px;border-radius:999px;min-width:25px;text-align:center}
+.ui-priority-item{margin:0!important}
+.ui-notify-item{transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
+.ui-notify-item:hover{transform:translateY(-1px);border-color:#6283a0;box-shadow:0 8px 20px rgba(0,0,0,.12)}
+.ui-notify-item-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px}
+.ui-notify-item-head strong{min-width:0;flex:1;font-size:12px!important;line-height:1.45;overflow-wrap:anywhere}
+.ui-notify-item-head .ui-notify-severity{flex:0 0 auto;align-self:flex-start}
+.ui-notify-severity{border:1px solid #435d73;border-radius:6px;background:#253c51;color:#c1d5e3;padding:3px 7px;font-size:9px;letter-spacing:.05em;font-weight:850}
+.ui-notify-severity[data-severity="critical"]{color:#ffb0bc;border-color:#82505b;background:rgba(127,50,66,.23)}
+.ui-notify-severity[data-severity="warning"]{color:#f6cc88;border-color:#756046;background:rgba(119,88,40,.2)}
+.ui-notify-severity[data-severity="good"]{color:#9ce5c8;border-color:#3c7567;background:rgba(48,115,91,.22)}
+.ui-priority-group .ui-notify-item[data-severity="warning"]{border-left:3px solid #eaba79}
+.ui-priority-group .ui-notify-item[data-severity="critical"]{border-left:3px solid #ed98a5}
+.ui-notify-row-actions{gap:7px!important}
+.ui-notify-action{transition:background .16s ease,border-color .16s ease,transform .16s ease!important}
+.ui-notify-action:hover:not(:disabled){transform:translateY(-1px)}
+.ui-notify-action:active:not(:disabled){transform:translateY(0)}
+
+/* Mini timeline: trazo continuo, hora, severidad y acción rápida */
+.ui-timeline{position:relative;padding:0 0 0 23px;display:grid;gap:11px}
+.ui-timeline::before{content:"";position:absolute;left:7px;top:48px;bottom:25px;width:2px;background:linear-gradient(#608ca8,#32516a 65%,transparent);border-radius:2px;pointer-events:none}
+.ui-timeline-intro{padding:4px 2px 10px;min-height:45px}
+.ui-timeline-intro strong{display:block;font-size:12px;color:#eef6fb}
+.ui-timeline-intro small{display:block;font-size:10px;line-height:1.55;color:#acc3d5;margin-top:3px}
+.ui-timeline-entry{position:relative;margin:0!important;min-width:0}
+.ui-timeline-entry::before{content:"";position:absolute;left:-23px;top:23px;width:10px;height:10px;border-radius:50%;background:#e2b56e;box-shadow:0 0 0 4px #16283a;border:1px solid #f1c989;z-index:1}
+.ui-timeline-entry[data-severity="critical"]::before{background:#f08f9c;border-color:#ffc5cc}
+.ui-timeline-entry[data-severity="good"]::before{background:#76d5b2;border-color:#a4f0d5}
+.ui-timeline-time{display:block;font-size:10px;color:#adc9dd;margin-top:6px;font-variant-numeric:tabular-nums}
+.ui-timeline-entry.ui-notify-new{background:linear-gradient(130deg,#243f53,#20354a)!important}
+
+/* Latido crítico: dos golpes discretos solo por cambios graves confirmados
+   o por desconexión de un PLC incluido explícitamente en PLC_PRIORITARIOS. */
+.ui-notify-toggle[data-pendientes="si"]{animation:none!important}
+.ui-notify-toggle.ui-notify-critical-heartbeat{
+  animation:ui-scada-critical-beat 1.95s ease-in-out 1!important;
+  border-color:#ef9eaa!important;
+}
+.plc.ui-plc-critical-heartbeat{
+  animation:ui-scada-plc-critical-beat 1.95s ease-in-out 1!important;
+}
+@keyframes ui-scada-critical-beat{
+  0%,100%{box-shadow:0 12px 32px rgba(0,0,0,.4);transform:scale(1)}
+  15%,42%{box-shadow:0 0 0 5px rgba(241,144,158,.15),0 14px 35px rgba(0,0,0,.28);transform:scale(1.015)}
+  27%,54%{box-shadow:0 12px 32px rgba(0,0,0,.4);transform:scale(1)}
+}
+@keyframes ui-scada-plc-critical-beat{
+  0%,100%{box-shadow:0 8px 26px rgba(0,0,0,.11);transform:translateY(0)}
+  18%,42%{box-shadow:0 0 0 7px rgba(240,143,156,.10),0 14px 30px rgba(0,0,0,.23);transform:translateY(-2px)}
+  28%,55%{box-shadow:0 8px 26px rgba(0,0,0,.11);transform:translateY(0)}
+}
+@media(max-width:560px){
+  .ui-notify{width:calc(100vw - 20px);right:10px;bottom:10px}
+  .ui-notify-tabs{padding:10px 10px 0}
+  .ui-notify-priority-summary{padding:10px 10px 3px;gap:5px}
+  .ui-notify-priority-chip{font-size:10px}
+  .ui-notify-items{padding:10px!important}
+  .ui-notify-item-head{gap:6px}
+  .ui-notify-item-head strong{font-size:11px!important}
+  .ui-notify-severity{font-size:8px}
+}
+@media(prefers-reduced-motion:reduce){
+  .ui-notify-toggle.ui-notify-critical-heartbeat,.plc.ui-plc-critical-heartbeat{animation:none!important}
+  .ui-notify-item:hover,.ui-notify-action:hover:not(:disabled){transform:none!important}
+}
+
+/* Un único pulso suave por cambio ordinario; nunca una animación infinita. */
+.ui-notify-toggle.ui-notify-attention{animation:ui-notify-new 1.05s ease-out 1!important}
+@media(prefers-reduced-motion:reduce){.ui-notify-toggle.ui-notify-attention{animation:none!important}}
+
+
+/* ==============================================================
+   SCADA PREMIUM · FASE 7.7
+   Identidad refinada; realce operativo, sin destellos permanentes.
+   ============================================================== */
+:root{
+ --ui-premium-ink:#e9f2fa;
+ --ui-premium-muted:#adc0d0;
+ --ui-premium-accent:#9bc7e6;
+ --ui-premium-line:rgba(125,167,199,.22);
+ --ui-premium-easing:cubic-bezier(.22,.71,.17,1);
+}
+body{background:radial-gradient(ellipse 70% 34% at 50% -9%,rgba(61,107,145,.17),transparent),linear-gradient(180deg,#0b1827 0%,#0a1522 46%,#0a1320 100%)!important;color:var(--ui-premium-ink)}
+header{padding-block:18px!important;background:rgba(13,27,42,.98)!important;border-bottom-color:rgba(125,167,199,.19)!important;box-shadow:0 8px 24px rgba(0,0,0,.15)!important}
+.marca h1{font-size:clamp(18px,1.7vw,22px)!important;font-weight:760;letter-spacing:-.03em!important}
+.marca .logo{background:linear-gradient(145deg,rgba(67,156,187,.15),rgba(39,105,157,.10))!important;border-color:rgba(106,173,210,.4)!important;color:#9bdfeb!important}
+.navegacion-modulos{margin-bottom:16px!important;padding-block:12px!important;border-bottom-color:rgba(120,160,190,.16)!important}
+.navegacion-modulos .enlace-modulo{border-radius:11px!important;padding:11px 16px!important;box-shadow:none!important}
+.navegacion-modulos .enlace-modulo:not(.activo):hover{background:rgba(55,89,119,.45)!important}
+.navegacion-modulos .enlace-modulo.activo{background:linear-gradient(130deg,#245c7d,#1d4b68)!important;border-color:#6598b9!important;box-shadow:inset 0 1px rgba(255,255,255,.055),0 3px 12px rgba(17,49,75,.16)!important}
+main{padding-top:18px!important}
+.ui-pagebar{border-color:rgba(134,173,199,.18)!important;background:rgba(19,40,57,.65)!important}
+.page-intro.scada-hero{padding:clamp(23px,3vw,34px)!important;margin-bottom:25px!important;border-color:rgba(115,165,198,.32)!important;border-radius:19px!important;background:linear-gradient(115deg,#18354a,#12293d 58%,#102434)!important;box-shadow:0 16px 32px rgba(0,0,0,.14)!important}
+.scada-hero::after{opacity:.48!important}
+.scada-hero h1{letter-spacing:-.04em!important;font-size:clamp(26px,3vw,39px)!important}
+.scada-hero .eyebrow{letter-spacing:.11em!important;color:#a3cde6!important}
+.scada-hero-footer span,.scada-live{border-color:rgba(143,187,212,.22)!important;background:rgba(13,36,52,.62)!important}
+.encabezado-seccion h2{font-size:18px!important;letter-spacing:-.025em!important}
+.resumen{gap:12px!important;margin-bottom:28px!important}
+.resumen-card{min-height:142px!important;padding:21px 22px!important;border:1px solid rgba(111,153,180,.25)!important;border-radius:14px!important;background:linear-gradient(145deg,#192e42,#132536)!important;box-shadow:0 7px 20px rgba(0,0,0,.10)!important}
+.resumen-card:hover{border-color:#628baa!important;box-shadow:0 10px 22px rgba(0,0,0,.14)!important}
+.resumen-titulo{letter-spacing:.09em!important;color:#aec4d6!important}
+.resumen-nota{font-size:12px!important;line-height:1.55!important;color:#b9cbd9!important}
+.resumen-valor{letter-spacing:-.045em!important}
+.resumen-card[data-frescura="ok"] .resumen-nota{color:#9fdcc7!important}
+.resumen-card[data-frescura="error"] .resumen-nota{color:#edb3b8!important}
+.herramientas-plc{border-radius:14px!important;background:linear-gradient(115deg,#172b3e,#112437)!important;border-color:rgba(125,169,199,.26)!important;gap:15px!important;margin-bottom:19px!important;padding:14px 17px!important}
+.herramientas-plc label{font-size:12px!important;color:#bbcede!important}
+.herramientas-plc .resultado-filtro{font-variant-numeric:tabular-nums}
+.ui-premium-layout{display:flex;align-items:center;justify-content:flex-end;margin-left:auto}
+.ui-premium-layout-toggle{border:1px solid rgba(134,177,203,.42);background:rgba(42,77,105,.36);color:#def0f9;border-radius:10px;min-height:41px;padding:10px 15px;font:inherit;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;transition:background .18s ease,border-color .18s ease,transform .18s ease}
+.ui-premium-layout-toggle:hover{background:#284d68;border-color:#79a9c6}
+.ui-premium-layout-toggle[aria-pressed="true"]{background:#1e5360;border-color:#5fabae}
+.dispositivos{gap:14px!important}
+.plc{border-radius:14px!important;background:linear-gradient(150deg,#172d41,#122335 70%)!important;box-shadow:0 7px 19px rgba(0,0,0,.11)!important;scroll-margin-top:125px}
+.plc-cabecera{padding:16px 18px!important;gap:12px;background:linear-gradient(120deg,rgba(74,137,171,.065),transparent)!important}
+.plc-contenido{padding:16px 18px!important}
+.plc-identificacion{min-width:0}
+.plc-fabricante{font-size:10px!important;letter-spacing:.105em!important}
+.plc-nombre{font-size:19px!important;letter-spacing:-.025em!important}
+.plc-modelo{font-size:12px!important;color:#bad0df!important}
+.plc-datos-principales{gap:9px!important}
+.plc-datos-principales .dato{min-height:53px;padding:10px 12px!important;border-color:rgba(110,156,186,.16)!important;background:rgba(9,22,35,.44)!important}
+.plc-datos-principales .dato-label{font-size:10px!important;color:#adbfce!important}
+.plc-datos-principales .dato-valor{font-size:13px!important}
+.plc-detalles summary{font-size:12px!important;color:#a3d1ed!important}
+.plc:hover{transform:translateY(-2px)!important;box-shadow:0 10px 24px rgba(0,0,0,.16)!important}
+.ui-notify{width:min(480px,calc(100vw - 26px))}
+.ui-notify-panel{background:linear-gradient(150deg,#1a3247,#112538)!important;border-color:rgba(124,164,192,.45)!important;box-shadow:0 22px 55px rgba(0,0,0,.39)!important}
+.ui-notify-toggle{background:linear-gradient(120deg,#25445b,#20394f)!important;border-color:#6387a0!important;box-shadow:0 12px 30px rgba(0,0,0,.27)!important}
+.ui-notify-item{border-color:rgba(124,170,203,.25)!important;background:#1b3447!important}
+.ui-priority-group-head{border-bottom-color:rgba(125,168,197,.2)!important}
+.ui-notify-items{overscroll-behavior:contain!important;scroll-behavior:auto!important}
+/* El destino sigue visible y claramente identificable sin depender del movimiento. */
+.plc.ui-plc-target,.plc.ui-plc-target:hover{position:relative;border:2px solid #9accef!important;box-shadow:0 0 0 4px rgba(109,177,221,.20),0 12px 30px rgba(0,0,0,.30)!important;z-index:4}
+.plc.ui-plc-target::before{height:4px!important;background:#9accef!important}
+.plc.ui-plc-target-enter{animation:ui-target-arrival 1.2s var(--ui-premium-easing) 1!important}
+@keyframes ui-target-arrival{0%{filter:brightness(1);transform:translateY(7px)}35%{filter:brightness(1.12);transform:translateY(-2px)}100%{filter:brightness(1);transform:translateY(0)}}
+.ui-target-flag{display:inline-flex;align-items:center;justify-content:center;max-width:max-content;border-radius:8px;background:#27607f;color:#f4fcff;border:1px solid #8fc9e7;padding:7px 9px;font-size:11px;font-weight:780;letter-spacing:.025em;box-shadow:0 4px 10px rgba(0,0,0,.13)}
+.ui-plc-target .plc-cabecera{flex-wrap:wrap}
+.ui-plc-target .ui-target-flag{flex:1 1 100%;order:4}
+.ui-location-error{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:1700;max-width:min(90vw,440px);padding:14px 18px;border-radius:12px;background:#40313b;border:1px solid #be8592;color:#ffe8ed;box-shadow:0 12px 30px rgba(0,0,0,.4);font-size:13px}
+/* Vista compacta: reduce espacios, conserva diagnósticos y etiquetas. */
+.ui-premium-compact .dispositivos{grid-template-columns:repeat(4,minmax(0,1fr));gap:11px!important}
+.ui-premium-compact .plc-cabecera{padding:12px!important}
+.ui-premium-compact .plc-contenido{padding:12px!important}
+.ui-premium-compact .plc-nombre{font-size:17px!important}
+.ui-premium-compact .plc-datos-principales{gap:6px!important}
+.ui-premium-compact .plc-datos-principales .dato{min-height:42px;padding:9px!important}
+.ui-premium-compact .plc-datos-principales .dato-valor{font-size:12px!important}
+.ui-premium-compact .plc-detalles summary{min-height:34px!important}
+@media(max-width:1300px){.ui-premium-compact .dispositivos{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:990px){.ui-premium-compact .dispositivos{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:750px){.ui-premium-layout{margin-left:0}.ui-premium-compact .dispositivos{grid-template-columns:1fr}.resumen-card{min-height:130px!important}}
+@media(max-width:600px){.scada-hero{padding:20px!important}.ui-premium-layout-toggle{width:100%}.ui-premium-layout{width:100%}.ui-target-flag{font-size:10px}.plc-cabecera,.plc-contenido{padding:13px!important}}
+@media(prefers-reduced-motion:reduce){.plc.ui-plc-target-enter{animation:none!important}.plc:hover{transform:none!important}}
+
+/* Ajuste premium: la navegación móvil no debe ocupar toda la pantalla. */
+@media(max-width:560px){
+ .navegacion-modulos{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;padding:10px 12px!important;margin:0 0 11px!important}
+ .navegacion-modulos .enlace-modulo{justify-content:flex-start!important;gap:6px!important;min-width:0;min-height:42px!important;padding:9px 10px!important;font-size:10.5px!important;line-height:1.25!important;white-space:normal}
+ .navegacion-modulos .nav-icon{flex:0 0 auto;font-size:14px!important}
+ .ui-pagebar{padding:11px 14px!important}
+ .scada-hero{margin-bottom:20px!important}
+ .scada-hero-footer{gap:7px!important}
+ .ui-premium-layout{margin-top:2px}
+}
+
+
+/* ==============================================================
+   FASE 7.8 · SCADA Premium Super Premium
+   Pulido visual global, confort del operador y microanimaciones.
+   ============================================================== */
+:root{
+  --ui-anim-fast:180ms;
+  --ui-anim-normal:320ms;
+  --ui-anim-slow:720ms;
+  --ui-ease-premium:cubic-bezier(.2,.72,.18,1);
+  --ui-module-accent:#8fd3ff;
+}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+body::after{
+  content:"";position:fixed;inset:auto auto -16vmax -10vmax;width:38vmax;height:38vmax;
+  border-radius:50%;pointer-events:none;z-index:-1;
+  background:radial-gradient(circle,rgba(111,173,226,.11) 0%,rgba(111,173,226,.04) 34%,transparent 72%);
+  filter:blur(8px);opacity:.9;animation:ui-ambient-drift 24s ease-in-out infinite alternate;
+}
+@keyframes ui-ambient-drift{
+  from{transform:translate3d(0,0,0) scale(1)}
+  50%{transform:translate3d(3vw,-2vh,0) scale(1.05)}
+  to{transform:translate3d(-2vw,1.5vh,0) scale(.98)}
+}
+
+nav.nav,nav.navegacion-modulos,.hero,.scada-hero,.panel,.metric,.kpi,.resumen-card,.plc,
+.ui-notify-panel,.ui-notify-toggle,.ui-pagebar,.herramientas-plc,.timeline-entry,.feeditem,
+.ui-priority-group,.ui-priority-group-head,.tablewrap{
+  position:relative;isolation:isolate;overflow:hidden;
+}
+.ui-premium-surface > :not(.ui-surface-glow){position:relative;z-index:1}
+.ui-surface-glow{
+  position:absolute;inset:-1px;z-index:0;pointer-events:none;border-radius:inherit;
+  background:radial-gradient(240px circle at var(--mx,50%) var(--my,0%),rgba(153,213,255,.17),rgba(153,213,255,.08) 18%,transparent 60%);
+  opacity:0;transition:opacity var(--ui-anim-normal) ease,transform var(--ui-anim-normal) ease;
+  transform:scale(.985);
+}
+.ui-premium-surface:hover .ui-surface-glow,
+.ui-premium-surface:focus-within .ui-surface-glow{opacity:1;transform:scale(1)}
+
+nav.nav,nav.navegacion-modulos{
+  border-color:#355068!important;
+  box-shadow:0 18px 32px rgba(0,0,0,.18), inset 0 1px rgba(255,255,255,.04)!important;
+}
+nav.nav a,nav.navegacion-modulos a{position:relative;overflow:hidden}
+nav.nav a::after,nav.navegacion-modulos a::after{
+  content:"";position:absolute;left:14px;right:14px;bottom:6px;height:2px;border-radius:99px;
+  background:linear-gradient(90deg,transparent,var(--ui-module-accent),transparent);
+  transform:scaleX(0);transform-origin:center;opacity:.7;transition:transform var(--ui-anim-fast) ease,opacity var(--ui-anim-fast) ease;
+}
+nav.nav a:hover::after,nav.navegacion-modulos a:hover::after,
+nav.nav a.active::after,nav.navegacion-modulos a.activo::after{transform:scaleX(1);opacity:1}
+nav.nav a.active,nav.navegacion-modulos a.activo{
+  box-shadow:inset 0 1px rgba(255,255,255,.12),0 10px 24px rgba(0,0,0,.16),0 0 0 1px rgba(143,211,255,.10)!important;
+}
+
+.hero,.scada-hero{
+  box-shadow:0 18px 42px rgba(0,0,0,.18), inset 0 1px rgba(255,255,255,.04)!important;
+}
+.hero::before,.scada-hero::before{
+  content:"";position:absolute;inset:auto 0 0 0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(147,211,255,.45),transparent);pointer-events:none
+}
+.scada-hero-top,.scada-hero-footer{position:relative;z-index:1}
+.scada-live{box-shadow:inset 0 1px rgba(255,255,255,.05), 0 8px 22px rgba(0,0,0,.14)}
+.ui-hero-link{box-shadow:0 10px 22px rgba(0,0,0,.16)}
+.ui-hero-link:hover{transform:translateY(-1px) translateX(1px)}
+
+.panel,.metric,.kpi,.resumen-card,.plc,.tablewrap,.ui-pagebar,.herramientas-plc{
+  border-color:#37536a!important;
+  box-shadow:0 12px 28px rgba(0,0,0,.12), inset 0 1px rgba(255,255,255,.03)!important;
+}
+.metric,.kpi,.resumen-card{
+  backdrop-filter:blur(7px);
+}
+.resumen-card::before,.metric::before,.kpi::before{
+  box-shadow:0 0 16px color-mix(in srgb, var(--ui-module-accent) 18%, transparent);
+}
+.resumen-valor,.metric strong,.kpi strong,.timeline-metric strong{
+  text-shadow:0 0 14px rgba(255,255,255,.03);
+}
+.ui-value-updated{animation:ui-value-bump .82s var(--ui-ease-premium) 1}
+@keyframes ui-value-bump{
+  0%{transform:translateY(0);box-shadow:0 0 0 0 rgba(147,211,255,0)}
+  28%{transform:translateY(-2px);box-shadow:0 0 0 6px rgba(147,211,255,.08)}
+  100%{transform:translateY(0);box-shadow:0 0 0 0 rgba(147,211,255,0)}
+}
+
+.herramientas-plc{
+  position:sticky;top:12px;z-index:55;
+  background:linear-gradient(180deg,rgba(19,37,54,.94),rgba(16,29,44,.92));
+  border:1px solid #355169;border-radius:16px;padding:12px 14px;
+  backdrop-filter:blur(10px);
+}
+.herramientas-plc input,.herramientas-plc select{background:#0d1b2a!important}
+.resultado-filtro{font-weight:700;letter-spacing:.01em}
+
+.tablewrap{border-radius:16px;background:linear-gradient(180deg,rgba(17,31,46,.96),rgba(13,25,38,.96));padding:2px}
+thead th{box-shadow:0 4px 12px rgba(0,0,0,.14)}
+
+.btn,.ui-notify-action,.ui-premium-layout-toggle,.ui-notify-close,.ui-hero-link{
+  position:relative;overflow:hidden;
+}
+.btn::after,.ui-notify-action::after,.ui-premium-layout-toggle::after,.ui-notify-close::after,.ui-hero-link::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(110deg,transparent 0%,rgba(255,255,255,.12) 45%,transparent 60%);
+  transform:translateX(-135%);
+}
+.btn:hover::after,.ui-notify-action:hover::after,.ui-premium-layout-toggle:hover::after,.ui-notify-close:hover::after,.ui-hero-link:hover::after{
+  animation:ui-sheen .9s ease 1;
+}
+@keyframes ui-sheen{from{transform:translateX(-135%)}to{transform:translateX(145%)}}
+
+.ui-notify-panel{
+  border-radius:20px!important;
+  box-shadow:0 28px 80px rgba(0,0,0,.48),0 0 0 1px rgba(146,198,239,.06)!important;
+}
+.ui-notify-head{background:linear-gradient(90deg,rgba(55,92,123,.26),rgba(25,43,60,.1) 62%,transparent)}
+.ui-notify-health{
+  border-top:1px solid rgba(255,255,255,.03);
+  border-bottom:1px solid rgba(255,255,255,.04)
+}
+.ui-notify-priority-summary{gap:8px}
+.ui-notify-priority-chip{backdrop-filter:blur(6px)}
+.ui-notify-item{
+  box-shadow:inset 0 1px rgba(255,255,255,.03);
+}
+.ui-notify-item:hover{transform:translateY(-2px) scale(1.002);box-shadow:0 16px 24px rgba(0,0,0,.16)}
+.ui-priority-group-head{backdrop-filter:blur(6px)}
+.ui-timeline::before{opacity:.9}
+.ui-timeline-entry::after{
+  content:"";position:absolute;left:-16px;top:28px;width:14px;height:2px;border-radius:99px;
+  background:linear-gradient(90deg,#5f88a8,transparent);pointer-events:none
+}
+.ui-notify-toggle{
+  backdrop-filter:blur(10px);
+  box-shadow:0 18px 44px rgba(0,0,0,.42)!important;
+}
+.ui-notify-summary{max-width:100%}
+
+.bars .fill,.track .fill,.daybar{transition:width .7s var(--ui-ease-premium),height .7s var(--ui-ease-premium),transform .24s ease}
+.barrow:hover .fill,.barline:hover .fill,.day:hover .daybar{filter:brightness(1.08)}
+.feeditem,.timeline-entry,.ui-priority-group-head{transition:transform var(--ui-anim-fast) ease,border-color var(--ui-anim-fast) ease,box-shadow var(--ui-anim-fast) ease}
+.feeditem:hover,.timeline-entry:hover,.ui-priority-group-head:hover{transform:translateY(-1px);border-color:#6487a5;box-shadow:0 10px 24px rgba(0,0,0,.13)}
+
+@media (max-width:900px){
+  .herramientas-plc{position:static}
+}
+@media (prefers-reduced-motion:reduce){
+  body::after,.ui-value-updated,.btn:hover::after,.ui-notify-action:hover::after,.ui-premium-layout-toggle:hover::after,.ui-notify-close:hover::after,.ui-hero-link:hover::after{animation:none!important}
+  .ui-surface-glow{transition:none!important}
+}
+
+
+/* =============================================================
+   FASE 7.9 · Premium visual adicional para todos los paneles
+   ============================================================= */
+:root{
+  --ui-premium-shadow:0 16px 40px rgba(0,0,0,.28);
+  --ui-premium-line:rgba(137,190,233,.18);
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;
+  background:
+    radial-gradient(circle at 12% 18%, rgba(80,132,186,.10), transparent 22%),
+    radial-gradient(circle at 82% 8%, rgba(72,196,172,.08), transparent 20%),
+    linear-gradient(180deg, rgba(255,255,255,.018), transparent 22%);
+}
+.hero,.scada-hero,.panel,.metric,.kpi,.resumen-card,.plc,.alarm-center,.timeline-entry,.feeditem,.type-card{
+  backdrop-filter: blur(6px);
+}
+.panel,.metric,.kpi,.resumen-card,.plc{
+  box-shadow: var(--ui-premium-shadow);
+}
+.panel:hover,.metric:hover,.kpi:hover,.resumen-card:hover,.plc:hover{
+  border-color: rgba(127,176,221,.42)!important;
+  box-shadow: 0 18px 44px rgba(0,0,0,.34), 0 0 0 1px rgba(137,190,233,.06) inset;
+}
+.hero::before,.scada-hero::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(120deg, rgba(255,255,255,.03), transparent 28%, transparent 72%, rgba(255,255,255,.02));
+}
+.ui-notify-toggle,.ui-notify-panel,.ui-notify-item,.alarm-item{
+  backdrop-filter: blur(8px);
+}
+.ui-notify-item,.alarm-item,.timeline-entry,.feeditem,.type-card{
+  transition: transform .24s ease, border-color .24s ease, box-shadow .24s ease, background .24s ease;
+}
+.ui-notify-item:hover,.alarm-item:hover,.timeline-entry:hover,.feeditem:hover,.type-card:hover{
+  transform: translateY(-2px);
+}
+.ui-notify-item[data-severity="alta"],.alarm-item[data-priority="alta"]{
+  box-shadow: 0 0 0 1px rgba(255,125,140,.18) inset, 0 10px 26px rgba(0,0,0,.24);
+}
+.ui-notify-item[data-severity="media"],.alarm-item[data-priority="media"]{
+  box-shadow: 0 0 0 1px rgba(255,205,114,.16) inset, 0 10px 26px rgba(0,0,0,.22);
+}
+@keyframes uiSoftPulseOnce{0%{box-shadow:0 0 0 0 rgba(101,182,255,.30)}70%{box-shadow:0 0 0 12px rgba(101,182,255,0)}100%{box-shadow:0 0 0 0 rgba(101,182,255,0)}}
+.ui-notify-toggle[data-nuevos="si"]{animation:uiSoftPulseOnce 1.4s ease}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#31506e;border-radius:12px;border:2px solid rgba(0,0,0,.18)}
+::-webkit-scrollbar-track{background:#0f1a29}
+
+/* ============================================================
+   FASE 7.10 · Acabado SCADA Premium para módulos restantes.
+   Puro CSS: no altera las consultas, alarmas ni el control PLC.
+   ============================================================ */
+:root{
+  --ui-precision-border:#36516b;
+  --ui-deep-shadow:0 14px 32px rgba(0,0,0,.16);
+  --ui-soft-aura:rgba(126,189,231,.11);
+}
+body[data-ui-page="eventos"]{--ui-module-accent:#eac487}
+body[data-ui-page="horometro"]{--ui-module-accent:#85dcc6}
+body[data-ui-page="reportes"]{--ui-module-accent:#b0b9ff}
+body[data-ui-page="supervision"]{--ui-module-accent:#86c8f5}
+
+/* Accesibilidad y confort: nada se mueve de manera continua salvo el fondo ambiental muy tenue. */
+:where(.panel,.metric,.kpi,.resumen-card,.plc,.timeline-entry,.feeditem){
+  transition-property:border-color,box-shadow,transform,background-color;
+  transition-duration:.22s;
+  transition-timing-function:cubic-bezier(.2,.72,.18,1);
+}
+:where(.panel,.metric,.kpi,.resumen-card,.plc):focus-within{
+  border-color:#80b6de!important;
+  box-shadow:0 0 0 1px rgba(128,182,222,.14),var(--ui-deep-shadow)!important;
+}
+:where(.panel,.metric,.kpi,.resumen-card,.plc,.timeline-entry):hover{
+  border-color:#52738e;
+}
+:where(.section-title,.sectionhead,.section-head) h2{
+  letter-spacing:-.025em;
+  font-weight:750;
+}
+:where(.section-title,.sectionhead,.section-head){
+  position:relative;
+}
+:where(.section-title,.sectionhead,.section-head) h2::after{
+  content:"";display:block;width:32px;height:2px;margin-top:8px;border-radius:2px;
+  background:var(--ui-module-accent);opacity:.68;
+}
+:where(.metric,.kpi,.resumen-card) :where(strong,.metric-value,.resumen-valor){
+  font-variant-numeric:tabular-nums;
+  text-shadow:0 2px 14px rgba(255,255,255,.018);
+}
+
+/* Botones: estados táctiles claros y discretos, sin destellos persistentes. */
+:where(.btn,button,.ui-notify-action):focus-visible{
+  outline:2px solid #a4d6fa!important;outline-offset:3px!important;
+}
+:where(.btn,button,.ui-notify-action):active:not(:disabled){transform:translateY(1px)}
+:where(.btn,button,.ui-notify-action):disabled{filter:saturate(.65)}
+
+/* Horómetro: lectura limpia de actividades y planificación. */
+body[data-ui-page="horometro"] :where(.chart-list,.week-strip,.tablewrap,.tareas){
+  border-radius:13px;
+}
+body[data-ui-page="horometro"] :where(.metric,.panel){
+  background-image:linear-gradient(155deg,rgba(30,53,69,.30),rgba(17,31,46,.04));
+}
+body[data-ui-page="horometro"] .chart-list :where(.track,.bar){border-radius:99px}
+body[data-ui-page="horometro"] :where(.week-strip,.chart-list){accent-color:var(--ui-module-accent)}
+body[data-ui-page="horometro"] :where(.notice,.api-state){border-radius:11px}
+
+/* Reportes: gráficos más legibles y apariencia consistente. */
+body[data-ui-page="reportes"] :where(.kpi,.panel){
+  box-shadow:var(--ui-deep-shadow),inset 0 1px rgba(255,255,255,.025)!important;
+}
+body[data-ui-page="reportes"] .bars .barrow{
+  padding:4px 0;
+  border-bottom:1px solid rgba(111,150,184,.07);
+}
+body[data-ui-page="reportes"] .bars .barrow:last-child{border-bottom:0}
+body[data-ui-page="reportes"] .bars .fill{
+  background:linear-gradient(90deg,#4c9cd3,#75d4c7);
+  box-shadow:0 0 10px rgba(110,200,210,.06);
+}
+body[data-ui-page="reportes"] .daily .daybar{
+  background:linear-gradient(0deg,#356b9c,#85c5fa);
+  box-shadow:inset 0 1px rgba(255,255,255,.08);
+}
+body[data-ui-page="reportes"] .daily .day:hover .daybar{
+  filter:brightness(1.14);
+}
+body[data-ui-page="reportes"] :where(.barrow strong,.day strong){font-variant-numeric:tabular-nums}
+
+/* Tabla de eventos, reportes y horómetro: jerarquía de lectura. */
+:where(.tablewrap) table{font-variant-numeric:tabular-nums}
+:where(.tablewrap) tbody tr{transition:background-color .18s ease}
+:where(.tablewrap) tbody tr:hover{background-color:rgba(102,158,196,.10)!important}
+:where(.tablewrap) thead th{
+  letter-spacing:.055em;
+  border-bottom:1px solid rgba(142,194,231,.18);
+}
+:where(.tablewrap) tbody tr:last-child td{border-bottom-color:transparent}
+
+/* Centro de avisos: apariencia premium sin tocar su scroll estable. */
+.ui-notify-panel{border-radius:18px!important}
+.ui-notify-head{border-color:rgba(139,185,215,.14)}
+.ui-notify-item[data-severity="critical"]{border-left-color:#ee95a5}
+.ui-notify-item[data-severity="good"]{border-left-color:#86ddbc}
+.ui-notify-item[data-severity="warning"]{border-left-color:#e9bc79}
+.ui-notify-toggle{box-shadow:0 15px 40px rgba(0,0,0,.32)!important}
+
+@media(prefers-reduced-motion:reduce){
+  :where(.panel,.metric,.kpi,.resumen-card,.plc,.timeline-entry,.feeditem){
+    transition:none!important;animation:none!important;
+  }
+}
+
+/* ============================================================
+  FASE 8 — SCADA ULTRA PREMIUM · Operación y visualización local
+  Cambios exclusivamente de interfaz; sin comandos industriales.
+  ============================================================ */
+:root{
+  --ultra-bg:#0c1725;
+  --ultra-card:#172b40;
+  --ultra-card-2:#102337;
+  --ultra-border:rgba(142,189,222,.23);
+  --ultra-cyan:#8ac8f5;
+  --ultra-green:#70d7bc;
+  --ultra-amber:#ecc080;
+  --ultra-red:#ef95a5;
+  --ultra-radius:17px;
+}
+.scada-status-ribbon{
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;
+  margin:0 0 19px!important;padding:12px!important;
+  border:1px solid rgba(119,166,199,.26);
+  border-radius:18px;background:linear-gradient(115deg,#162c40,#112338 70%);
+  box-shadow:0 14px 34px rgba(0,0,0,.18),inset 0 1px rgba(255,255,255,.035);
+}
+.scada-ribbon-item{position:relative;display:flex;flex-direction:column;gap:5px;min-width:0;
+  padding:12px 15px;background:rgba(8,21,33,.38);border:1px solid rgba(143,188,219,.16);
+  border-radius:12px;transition:background .2s ease,border-color .2s ease}
+.scada-ribbon-item:first-child{background:rgba(50,99,124,.13)}
+.scada-ribbon-item:hover{background:rgba(43,87,115,.24);border-color:rgba(151,198,231,.35)}
+.scada-ribbon-label{color:#b4cadc;font-size:10px;text-transform:uppercase;letter-spacing:.075em;font-weight:750}
+.scada-ribbon-value{font-size:clamp(17px,1.7vw,24px);line-height:1.2;font-weight:780;
+  font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#e8f5ff}
+.scada-ribbon-item[data-item="conectados"] .scada-ribbon-value{color:var(--ultra-green)}
+.scada-ribbon-item[data-item="sinCom"] .scada-ribbon-value{color:var(--ultra-amber)}
+.scada-ribbon-item[data-item="criticos"] .scada-ribbon-value{color:var(--ultra-red)}
+.scada-ribbon-update{grid-column:1/-1;padding:2px 5px 0;color:#9fb8cb;font-size:11px;line-height:1.5;
+  display:flex;align-items:center;gap:7px;font-variant-numeric:tabular-nums}
+.scada-ribbon-update::before{content:"";flex:none;width:7px;height:7px;background:#a5b5c6;border-radius:50%}
+.scada-status-ribbon[data-frescura="ok"] .scada-ribbon-update::before{background:#71ddbb;box-shadow:0 0 0 3px rgba(113,221,187,.10)}
+.scada-status-ribbon[data-frescura="sin-datos"]{border-color:rgba(241,184,118,.45)}
+.scada-status-ribbon[data-frescura="sin-datos"] .scada-ribbon-update{color:#f1c991}
+.scada-status-ribbon[data-frescura="sin-datos"] .scada-ribbon-update::before{background:#f1bb7c}
+.scada-status-ribbon[data-frescura="sin-datos"] .scada-ribbon-item:not(:first-child) .scada-ribbon-value{color:#b5bbc5}
+.scada-value-change{animation:scada-number-soft .65s cubic-bezier(.2,.72,.18,1)}
+@keyframes scada-number-soft{from{opacity:.55;filter:brightness(1.45);transform:translateY(3px)}to{opacity:1;filter:brightness(1);transform:translateY(0)}}
+
+/* Panel lógico de red: no representa topología física. */
+.scada-topologia{margin:18px 0 25px;padding:21px;border-radius:20px;
+  border:1px solid rgba(128,171,200,.3);
+  background:linear-gradient(150deg,rgba(23,45,64,.94),rgba(14,29,45,.96));
+  box-shadow:0 14px 35px rgba(0,0,0,.17)}
+.scada-map-head{display:flex;align-items:center;justify-content:space-between;gap:17px;flex-wrap:wrap}
+.scada-map-head>div{flex:1;min-width:240px}
+.scada-map-head h2{margin:5px 0 7px;font-size:20px;letter-spacing:-.03em;color:#f0f7fb}
+.scada-map-head p{margin:0;max-width:790px;color:#a9c0d1;font-size:12px;line-height:1.65}
+.scada-eyebrow{font-weight:800;letter-spacing:.12em;font-size:10px;color:#83cadf}
+.scada-map-toggle,.scada-wallboard-button,.scada-wallboard-exit{
+  display:inline-flex;justify-content:center;align-items:center;gap:8px;
+  min-height:42px;border:1px solid #4e7796;background:linear-gradient(130deg,#244a65,#1d3c55);
+  color:#e4f5ff;border-radius:11px;padding:10px 17px;font-size:12px;font-weight:800;
+  box-shadow:inset 0 1px rgba(255,255,255,.07);cursor:pointer;
+  transition:background .2s ease,border-color .2s ease,transform .2s ease}
+.scada-map-toggle:hover,.scada-wallboard-button:hover,.scada-wallboard-exit:hover{
+  background:#305a77;border-color:#78a8cb;transform:translateY(-1px)}
+.scada-map-body{margin-top:20px;border-top:1px solid rgba(128,177,208,.18);padding-top:17px}
+.scada-map-body[hidden]{display:none!important}
+.scada-map-reveal{animation:scada-map-appear .38s cubic-bezier(.2,.72,.18,1)}
+@keyframes scada-map-appear{from{opacity:.7;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.scada-map-bus{display:flex;align-items:center;gap:14px;
+  border:1px solid rgba(110,174,212,.3);border-radius:14px;padding:14px 17px;
+  background:linear-gradient(100deg,rgba(40,94,116,.35),rgba(31,60,84,.19));margin:0 0 19px}
+.scada-map-bus-symbol{display:grid;place-items:center;width:43px;height:43px;border-radius:13px;
+  background:#204966;color:#93d7f7;font-size:30px;flex:none}
+.scada-map-bus>div{flex:1;min-width:0}
+.scada-map-bus strong{display:block;font-size:13px;color:#effaff}
+.scada-map-bus small{display:block;font-size:11px;color:#a5c3d6;margin-top:3px}
+.scada-map-status{font-size:11px;color:#b8dfd3;font-weight:750;text-align:right}
+.scada-map-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px}
+.scada-map-node{position:relative;min-width:0;display:flex;flex-direction:column;gap:6px;
+  border:1px solid rgba(113,167,202,.23);border-top:3px solid #71879b;border-radius:13px;
+  background:linear-gradient(145deg,#172f45,#122538);padding:14px 14px 12px;
+  box-shadow:0 10px 23px rgba(0,0,0,.11);transition:border-color .22s ease,transform .22s ease,box-shadow .22s ease}
+.scada-map-node:hover{transform:translateY(-2px);box-shadow:0 15px 30px rgba(0,0,0,.20);border-color:#608caf}
+.scada-map-node[data-estado="conectado"]{border-top-color:#6cdbb4}
+.scada-map-node[data-estado="desconectado"]{border-top-color:#eab777}
+.scada-map-node[data-estado="critico"]{border-top-color:#f18d9c}
+.scada-map-node[data-estado="sin-datos"]{border-top-color:#8c9caa;opacity:.79}
+.scada-node-head{display:flex;align-items:center;justify-content:space-between;gap:7px;color:#f2f7fb;font-size:15px}
+.scada-node-dot{display:inline-block;border-radius:50%;width:10px;height:10px;background:#8098ae;flex:none}
+.scada-map-node[data-estado="conectado"] .scada-node-dot{background:#6cdbb4;box-shadow:0 0 0 4px rgba(108,219,180,.09)}
+.scada-map-node[data-estado="desconectado"] .scada-node-dot{background:#eab777}
+.scada-map-node[data-estado="critico"] .scada-node-dot{background:#f18d9c}
+.scada-node-model{color:#acc4d6;font-size:11px;overflow-wrap:anywhere;min-height:18px}
+.scada-node-ip{color:#8fc4eb;font:600 11px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace}
+.scada-node-state{font-size:10px;letter-spacing:.03em;font-weight:800;margin:2px 0 4px;color:#c7d8e6}
+.scada-map-node[data-estado="conectado"] .scada-node-state{color:#91ead0}
+.scada-map-node[data-estado="desconectado"] .scada-node-state{color:#f0ca91}
+.scada-map-node[data-estado="critico"] .scada-node-state{color:#f5a6b1}
+.scada-node-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:auto}
+.scada-node-actions button{border-radius:8px;background:#254158;border:1px solid #416885;color:#e7f2fb;
+  font-size:11px;font-weight:750;padding:7px 9px;cursor:pointer;flex:1}
+.scada-node-actions button:hover{background:#315775;border-color:#76a5c5}
+.scada-map-foot{color:#94b5c8;font-size:11px;line-height:1.6;margin:13px 2px 0}
+.scada-node-changed{animation:scada-node-shift 1.2s ease}
+@keyframes scada-node-shift{0%{box-shadow:0 0 0 0 rgba(133,197,230,.30)}35%{box-shadow:0 0 0 6px rgba(133,197,230,.07)}100%{box-shadow:0 0 0 0 rgba(133,197,230,0)}}
+.scada-topologia[data-frescura="sin-datos"] .scada-map-bus{border-color:rgba(241,184,118,.30)}
+.scada-topologia[data-frescura="sin-datos"] .scada-map-status{color:#f0c995}
+
+/* Acciones del centro global: contraste y espacio cómodo para dos opciones. */
+.ui-notify-row-actions{display:flex!important;justify-content:flex-end;gap:7px!important}
+.ui-notify-timeline{border-color:rgba(112,173,216,.58)!important;background:#173a53!important;color:#c9e9ff!important}
+.ui-notify-timeline:hover{background:#245374!important}
+.ui-notify-toast{grid-template-columns:minmax(0,1fr) auto auto auto!important}
+.ui-notify-toast .ui-notify-timeline{font-size:11px}
+.scada-timeline-target{animation:scada-timeline-arrive 1.8s cubic-bezier(.2,.72,.18,1) 1;
+  scroll-margin-top:22px}
+@keyframes scada-timeline-arrive{0%{outline:2px solid rgba(144,209,255,.72);outline-offset:3px}55%{outline:2px solid rgba(144,209,255,.28);outline-offset:7px}100%{outline:0 solid transparent;outline-offset:0}}
+
+/* Paneles secundarios: diseño coherente con SCADA Ultra Premium */
+body[data-ui-page="horometro"] .page-intro,
+body[data-ui-page="reportes"] .hero,
+body[data-ui-page="eventos"] .hero{border-radius:21px!important;box-shadow:0 20px 45px rgba(0,0,0,.2)!important}
+body[data-ui-page="horometro"] .panel,
+body[data-ui-page="reportes"] .panel,
+body[data-ui-page="eventos"] .panel{border-radius:18px!important;
+  background:linear-gradient(155deg,rgba(22,43,61,.97),rgba(15,29,45,.97))!important;
+  border-color:rgba(132,177,206,.22)!important;box-shadow:0 13px 33px rgba(0,0,0,.13)!important}
+body[data-ui-page="horometro"] .metric,
+body[data-ui-page="reportes"] .kpi,
+body[data-ui-page="eventos"] .metric{border-radius:15px!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.045),0 10px 24px rgba(0,0,0,.13)!important}
+body[data-ui-page="horometro"] .metric-value,
+body[data-ui-page="reportes"] .kpi strong{font-variant-numeric:tabular-nums;letter-spacing:-.04em}
+body[data-ui-page="horometro"] .chart-row,
+body[data-ui-page="reportes"] .barrow,
+body[data-ui-page="eventos"] .barline{border-radius:10px;transition:background .18s ease,transform .18s ease}
+body[data-ui-page="horometro"] .chart-row:hover,
+body[data-ui-page="reportes"] .barrow:hover,
+body[data-ui-page="eventos"] .barline:hover{background:rgba(118,172,211,.075)}
+body[data-ui-page="horometro"] .track,
+body[data-ui-page="reportes"] .track{background:#0d2235!important;border:1px solid rgba(100,155,190,.17);border-radius:99px;overflow:hidden}
+body[data-ui-page="horometro"] .fill,
+body[data-ui-page="reportes"] .fill,
+body[data-ui-page="eventos"] .fill,
+body[data-ui-page="horometro"] .day-track span,
+body[data-ui-page="reportes"] .daybar{transform-origin:left center;
+  transition:width .7s cubic-bezier(.2,.72,.18,1),height .7s cubic-bezier(.2,.72,.18,1),filter .2s ease}
+body[data-ui-page="horometro"] .track:hover .fill,
+body[data-ui-page="reportes"] .track:hover .fill{filter:brightness(1.14)}
+body[data-ui-page="horometro"] .day-card{transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease}
+body[data-ui-page="horometro"] .day-card:hover{transform:translateY(-2px);border-color:#6695b7;box-shadow:0 9px 20px rgba(0,0,0,.13)}
+body[data-ui-page="horometro"] #guardar{min-height:43px;font-weight:800;padding:11px 20px}
+body[data-ui-page="reportes"] .daily .day:hover{filter:brightness(1.12)}
+body[data-ui-page="reportes"] .daybar{border-radius:8px 8px 3px 3px}
+body[data-ui-page="horometro"] .tarea{transition:background .18s ease,border-color .18s ease;
+  background:rgba(13,30,47,.5);border-radius:10px!important;padding:12px!important}
+body[data-ui-page="horometro"] .tarea:has(input:checked){background:rgba(57,124,112,.13);border-color:rgba(111,209,171,.4)}
+body[data-ui-page="horometro"] .tarea:hover{background:rgba(43,73,92,.48)}
+body[data-ui-page="horometro"] .notice{border-radius:8px}
+body[data-ui-page="reportes"] tbody tr,
+body[data-ui-page="horometro"] tbody tr{transition:background-color .18s ease}
+body[data-ui-page="reportes"] tbody tr:hover,
+body[data-ui-page="horometro"] tbody tr:hover{background:rgba(124,181,218,.09)!important}
+body[data-ui-page="reportes"] .tag,
+body[data-ui-page="horometro"] .pill{border:1px solid rgba(134,178,208,.22);box-shadow:inset 0 1px rgba(255,255,255,.035)}
+body[data-ui-page="horometro"] .chart-row:nth-child(even),
+body[data-ui-page="reportes"] .barrow:nth-child(even){background:rgba(144,192,225,.025)}
+
+/* Modo sala: pantalla para supervisión visual, no añade controles industriales. */
+.scada-wallboard-exit{position:fixed;right:18px;top:13px;z-index:1850;border-color:#629bb9;
+  box-shadow:0 12px 28px rgba(0,0,0,.4);background:#244863}
+.scada-wallboard-exit[hidden]{display:none!important}
+body.scada-wallboard{background:#0a1420!important}
+body.scada-wallboard>header,
+body.scada-wallboard>.navegacion-modulos,
+body.scada-wallboard main>.ui-pagebar,
+body.scada-wallboard main>.scada-hero,
+body.scada-wallboard main>.scada-topologia,
+body.scada-wallboard main>.encabezado-seccion,
+body.scada-wallboard main>.herramientas-plc,
+body.scada-wallboard .ui-footer{display:none!important}
+body.scada-wallboard main{max-width:100%!important;padding:12px 22px 55px!important}
+body.scada-wallboard .scada-status-ribbon{margin:0 240px 14px 0!important;padding:9px!important}
+body.scada-wallboard #panel-resumen{display:none!important}
+body.scada-wallboard .dispositivos{display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:11px!important}
+body.scada-wallboard .plc{min-width:0;box-shadow:0 10px 28px rgba(0,0,0,.2)!important}
+body.scada-wallboard .plc-cabecera{padding:12px 13px!important}
+body.scada-wallboard .plc-contenido{padding:10px 12px!important}
+body.scada-wallboard .plc-datos-principales{gap:5px!important}
+body.scada-wallboard .plc-datos-principales .dato{padding:7px 9px!important}
+body.scada-wallboard .plc-detalles{display:none!important}
+body.scada-wallboard .plc-nombre{font-size:16px!important}
+body.scada-wallboard .plc-modelo{font-size:11px!important}
+body.scada-wallboard .plc .dato-valor{font-size:11px!important}
+body.scada-wallboard .ui-notify{z-index:1900}
+
+@media(max-width:1200px){
+ .scada-map-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+ body.scada-wallboard .dispositivos{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+ .scada-status-ribbon{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:850px){
+ .scada-map-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ body.scada-wallboard .dispositivos{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ body.scada-wallboard .scada-status-ribbon{margin-right:0!important;padding-top:50px!important}
+ .scada-status-ribbon{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:580px){
+ .scada-status-ribbon{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding:9px!important}
+ .scada-ribbon-item{padding:11px 10px}
+ .scada-ribbon-label{font-size:9px}
+ .scada-ribbon-value{font-size:17px}
+ .scada-map-grid{grid-template-columns:1fr}
+ .scada-map-head>div{min-width:0}
+ .scada-topologia{padding:15px}
+ .scada-map-toggle{width:100%}
+ .scada-map-bus{flex-wrap:wrap}
+ .scada-map-status{width:100%;text-align:left}
+ .ui-notify-toast{grid-template-columns:1fr auto!important}
+ .ui-notify-toast .ui-notify-timeline{grid-column:1}
+ body.scada-wallboard main{padding:9px 9px 60px!important}
+ body.scada-wallboard .dispositivos{grid-template-columns:1fr!important}
+ body.scada-wallboard .scada-status-ribbon{grid-template-columns:repeat(2,minmax(0,1fr));padding:47px 8px 9px!important}
+ .scada-wallboard-exit{top:8px;right:8px}
+}
+@media(prefers-reduced-motion:reduce){
+ .scada-value-change,.scada-node-changed,.scada-map-reveal,.scada-timeline-target{animation:none!important}
+ .scada-map-node,.scada-map-toggle,.scada-wallboard-button,.scada-wallboard-exit,
+ body[data-ui-page="horometro"] .day-card{transition:none!important;transform:none!important}
+}
+
+.scada-horometro-annotation{font-size:12px!important;letter-spacing:.01em;color:#a8c3d7;margin:12px 4px 18px;border-left:3px solid #73cbb4;padding:8px 13px;background:rgba(40,92,96,.11);border-radius:0 8px 8px 0}
+
+/* ================================================================
+   FASE 8.1 · MICROINTERACCIONES OPERATIVAS — SCADA ULTRA PREMIUM
+   Efectos breves ante transiciones REALES; no animan cada sondeo.
+   ================================================================ */
+:root{
+ --scada-transition-ease:cubic-bezier(.18,.72,.2,1);
+ --scada-cyan:#8bcfff;
+}
+.plc.scada-transition{
+ --scada-alert:#8bcfff;
+ animation:scada-card-signal 1.7s var(--scada-transition-ease) 1!important;
+}
+.plc.scada-transition[data-scada-change="desconexion"]{--scada-alert:#ee90ae}
+.plc.scada-transition[data-scada-change="recuperacion"],
+.plc.scada-transition[data-scada-change="run"]{--scada-alert:#6cddb7}
+.plc.scada-transition[data-scada-change="program"]{--scada-alert:#efc779}
+.plc.scada-transition[data-scada-change="stop"]{--scada-alert:#f29b86}
+.plc.scada-transition[data-scada-change="falla"]{--scada-alert:#ff858f}
+.plc.scada-transition[data-scada-change="identidad"]{--scada-alert:#70d3dd}
+@keyframes scada-card-signal{
+ 0%{outline:1px solid transparent;outline-offset:0;box-shadow:0 8px 24px rgba(0,0,0,.15)}
+ 24%{outline:2px solid var(--scada-alert);outline-offset:3px;box-shadow:0 0 0 9px color-mix(in srgb,var(--scada-alert) 12%,transparent),0 16px 36px rgba(0,0,0,.2)}
+ 60%{outline:1px solid color-mix(in srgb,var(--scada-alert) 50%,transparent);outline-offset:5px;box-shadow:0 0 0 5px color-mix(in srgb,var(--scada-alert) 5%,transparent)}
+ 100%{outline:1px solid transparent;outline-offset:0;box-shadow:0 8px 24px rgba(0,0,0,.15)}
+}
+.scada-change-flag{
+ position:absolute;z-index:9;right:14px;bottom:11px;max-width:calc(100% - 28px);
+ display:inline-flex;align-items:center;gap:7px;pointer-events:none;
+ border:1px solid color-mix(in srgb,var(--scada-alert) 70%,#112c42);
+ background:color-mix(in srgb,var(--scada-alert) 15%,#14293a);
+ box-shadow:0 10px 26px rgba(0,0,0,.33);
+ color:#f7fbff;padding:7px 11px;border-radius:9px;font-weight:780;font-size:11px;
+ animation:scada-change-flag-enter 1.7s var(--scada-transition-ease) both;
+}
+.scada-change-flag::before{content:"";flex:none;width:6px;height:6px;border-radius:2px;background:var(--scada-alert)}
+@keyframes scada-change-flag-enter{
+ 0%{opacity:0;transform:translateY(6px)}
+ 14%,68%{opacity:1;transform:translateY(0)}
+ 100%{opacity:0;transform:translateY(-3px)}
+}
+.scada-field-highlight{
+ animation:scada-reading-highlight 1.5s var(--scada-transition-ease) 1!important;
+ border-radius:7px;
+}
+@keyframes scada-reading-highlight{
+ 0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--scada-alert,#79c9fa) 0%,transparent)}
+ 25%{box-shadow:0 0 0 5px rgba(123,191,223,.16);filter:brightness(1.18)}
+ 100%{box-shadow:0 0 0 0 transparent;filter:brightness(1)}
+}
+/* El cambio de modo se lee por color, sin implicar fallo interno. */
+.plc[data-scada-change="program"] .scada-change-flag{color:#ffe3a5}
+.plc[data-scada-change="desconexion"] .scada-change-flag{color:#ffc0d0}
+.plc[data-scada-change="falla"] .scada-change-flag{color:#ffc4cb}
+
+/* Panel lateral: usa solamente el GET periódico ya existente. */
+.scada-diagnostic-overlay[hidden],.scada-diagnostic-drawer[hidden]{display:none!important}
+.scada-diagnostic-overlay{
+ position:fixed;inset:0;z-index:2100;background:rgba(3,11,19,.68);
+ backdrop-filter:blur(3px);animation:scada-drawer-shade .28s ease both;
+}
+.scada-diagnostic-drawer{
+ position:fixed;top:0;right:0;bottom:0;z-index:2101;
+ width:min(475px,100vw);padding:0 0 24px;
+ overflow-y:auto;overscroll-behavior:contain;
+ border-left:1px solid #537b95;
+ background:linear-gradient(155deg,#1c354a,#11263a 42%,#0d1d2c);
+ color:#edf6ff;box-shadow:-26px 0 75px rgba(0,0,0,.48);
+ animation:scada-drawer-in .4s var(--scada-transition-ease) both;
+ scrollbar-width:thin;
+}
+@keyframes scada-drawer-shade{from{opacity:0}to{opacity:1}}
+@keyframes scada-drawer-in{from{transform:translateX(22px);opacity:.6}to{transform:translateX(0);opacity:1}}
+body.scada-drawer-open{overflow:hidden}
+.scada-diagnostic-head{
+ display:flex;align-items:flex-start;justify-content:space-between;gap:16px;
+ border-bottom:1px solid rgba(151,194,222,.2);padding:26px 24px 18px;
+ background:linear-gradient(115deg,rgba(82,136,178,.16),transparent);
+}
+.scada-diagnostic-head h2{font-size:25px;line-height:1.2;margin:6px 0;letter-spacing:-.04em}
+.scada-diagnostic-head p{margin:0;font-size:12px;color:#b9d3e4}
+.scada-diagnostic-eyebrow{letter-spacing:.12em;font-weight:800;font-size:10px;color:#88c8f2}
+.scada-diagnostic-close{
+ border:1px solid #577b94;background:#24475e;color:#e5f4ff;
+ padding:9px 12px;border-radius:9px;cursor:pointer;white-space:nowrap;
+}
+.scada-diagnostic-close:hover{background:#315d77}
+.scada-diagnostic-freshness{
+ margin:18px 24px 14px;padding:10px 13px;border-radius:10px;
+ border:1px solid rgba(99,207,163,.35);background:rgba(54,137,113,.13);
+ color:#adf1d9;font-size:12px;font-weight:690;
+}
+.scada-diagnostic-drawer[data-frescura="sin-datos"] .scada-diagnostic-freshness{
+ color:#ffdaa0;border-color:rgba(240,190,124,.42);background:rgba(130,91,42,.16);
+}
+.scada-diagnostic-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;padding:0 24px}
+.scada-diagnostic-field{
+ padding:13px;min-width:0;border-radius:11px;border:1px solid #304c61;
+ background:rgba(11,28,43,.66);box-shadow:inset 0 1px rgba(255,255,255,.025);
+}
+.scada-diagnostic-field:nth-child(5),
+.scada-diagnostic-field:nth-child(6),
+.scada-diagnostic-field:nth-child(7),
+.scada-diagnostic-field:last-child{grid-column:span 2}
+.scada-diagnostic-label{display:block;font-size:10px;letter-spacing:.06em;color:#adc8d9;margin-bottom:8px;font-weight:700}
+.scada-diagnostic-value{display:block;font-size:13px;line-height:1.55;overflow-wrap:anywhere;color:#f0f7fd;font-variant-numeric:tabular-nums}
+.scada-diagnostic-value[data-estado="ok"]{color:#7ce5bf}
+.scada-diagnostic-value[data-estado="warning"]{color:#f4ca91}
+.scada-diagnostic-note{font-size:12px;line-height:1.6;color:#b8cfe0;padding:0 24px;margin:18px 0}
+.scada-diagnostic-actions{display:flex;gap:8px;flex-wrap:wrap;padding:0 24px}
+.scada-diagnostic-actions button{
+ flex:1;min-width:120px;border:1px solid #4a88b0;background:#255678;color:#e9f7ff;
+ padding:11px;border-radius:10px;font-weight:750;cursor:pointer;
+ transition:background .18s ease,transform .18s ease;
+}
+.scada-diagnostic-actions button:hover{background:#316d93;transform:translateY(-1px)}
+.scada-diagnostic-open{
+ width:100%;margin-top:11px;min-height:35px;cursor:pointer;
+ color:#bde3ff;border:1px solid #375976;border-radius:9px;
+ background:linear-gradient(90deg,rgba(39,84,112,.35),rgba(25,51,74,.24));
+ font:750 11px/1.3 'Segoe UI',system-ui,sans-serif;
+ transition:border-color .2s ease,background .2s ease,transform .2s ease;
+}
+.scada-diagnostic-open::before{content:"▤";margin-right:7px;opacity:.9}
+.scada-diagnostic-open:hover{background:#224663;border-color:#679bbf;transform:translateY(-1px)}
+.scada-diagnostic-open:focus-visible,.scada-diagnostic-actions button:focus-visible,
+.scada-diagnostic-close:focus-visible{outline:2px solid #9ad8ff;outline-offset:3px}
+body.scada-wallboard .scada-diagnostic-open{display:none!important}
+
+/* Animación de actualización solo en KPI de datos, excluyendo cronómetros. */
+.ui-value-updated{animation:scada-kpi-number-change .65s var(--scada-transition-ease) 1!important}
+@keyframes scada-kpi-number-change{
+ 0%{filter:brightness(1);transform:translateY(0)}
+ 32%{filter:brightness(1.25);transform:translateY(-2px)}
+ 100%{filter:brightness(1);transform:translateY(0)}
+}
+/* Timeline: una aparición breve y distintiva para eventos verdaderamente nuevos. */
+body[data-ui-page="eventos"] .timeline-entry.timeline-event-new{
+ animation:scada-event-appear .55s var(--scada-transition-ease) var(--item-delay,0ms) both!important;
+}
+@keyframes scada-event-appear{
+ from{opacity:.45;transform:translate3d(0,9px,0);border-color:color-mix(in srgb,var(--entry-color,#78ceef) 45%,#314d66)}
+ to{opacity:1;transform:translate3d(0,0,0)}
+}
+/* Gráficos: revelar únicamente al crearse, sin flujo de movimiento constante. */
+body[data-ui-page="reportes"] .barrow .fill,
+body[data-ui-page="horometro"] .chart-row .fill{transform-origin:left center;animation:scada-bar-arrival .6s var(--scada-transition-ease) both}
+@keyframes scada-bar-arrival{from{transform:scaleX(.14);opacity:.55}to{transform:scaleX(1);opacity:1}}
+/* Navegación: entrada de página sin retrasar la interacción. */
+body[data-ui-page] main{animation:scada-page-arrive .32s ease-out 1 both}
+@keyframes scada-page-arrive{from{opacity:.83;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:600px){
+ .scada-diagnostic-head{padding:19px 15px 16px}
+ .scada-diagnostic-grid{padding:0 15px;gap:7px}
+ .scada-diagnostic-field{padding:11px}
+ .scada-diagnostic-note,.scada-diagnostic-actions{padding-left:15px;padding-right:15px}
+ .scada-diagnostic-freshness{margin:14px 15px}
+}
+@media(prefers-reduced-motion:reduce){
+ .plc.scada-transition,.scada-change-flag,.scada-field-highlight,.scada-diagnostic-overlay,
+ .scada-diagnostic-drawer,.ui-value-updated,body[data-ui-page] main,
+ body[data-ui-page="eventos"] .timeline-entry.timeline-event-new,
+ body[data-ui-page="reportes"] .barrow .fill,
+ body[data-ui-page="horometro"] .chart-row .fill{animation:none!important;transition:none!important;transform:none!important}
+ .scada-diagnostic-open:hover,.scada-diagnostic-actions button:hover{transform:none!important}
+}
+/* El indicador temporal flota sobre la tarjeta: nunca altera la altura ni el inventario. */
+.plc.ui-premium-surface > .scada-change-flag{position:absolute;z-index:10;}

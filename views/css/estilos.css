@@ -1,0 +1,398 @@
+/* ============================================================
+   PLATAFORMAFINAL | INTERFAZ DE SUPERVISION INDUSTRIAL
+   Hoja de estilos integral - compatible con el HTML existente
+   ============================================================ */
+
+:root {
+    --fondo: #080d14;
+    --panel: #111b28;
+    --panel-secundario: #192637;
+    --borde: #29394b;
+    --texto: #edf3fa;
+    --texto-secundario: #91a4b9;
+    --verde: #24d69b;
+    --rojo: #ff5868;
+    --amarillo: #ffc857;
+    --azul: #55aaff;
+}
+
+* { box-sizing: border-box; }
+
+html { color-scheme: dark; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: radial-gradient(ellipse at 50% -15%, rgba(34, 78, 119, .22), transparent 55%), var(--fondo);
+    color: var(--texto);
+    font-family: "Segoe UI", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* CABECERA */
+header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 22px 34px;
+    border-bottom: 1px solid var(--borde);
+    background: rgba(13, 22, 33, .96);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, .18);
+}
+header::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--azul), var(--verde), transparent);
+}
+.marca { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.logo {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 52px;
+    height: 52px;
+    border: 1px solid rgba(36, 214, 155, .35);
+    border-radius: 14px;
+    background: rgba(36, 214, 155, .10);
+    color: var(--verde);
+    font-size: 28px;
+}
+h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: 1.2px; }
+.subtitulo { margin-top: 6px; color: var(--texto-secundario); font-size: 11px; letter-spacing: 1.6px; }
+.controles-sistema { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 10px; }
+.estado-sistema {
+    padding: 10px 14px;
+    border: 1px solid rgba(255, 200, 87, .25);
+    border-radius: 8px;
+    background: rgba(255, 200, 87, .07);
+    color: var(--amarillo);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .7px;
+}
+.boton-control {
+    min-height: 40px;
+    padding: 10px 18px;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    background: var(--panel-secundario);
+    color: var(--texto);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .4px;
+    cursor: pointer;
+    transition: background .2s ease, border-color .2s ease, transform .2s ease;
+}
+.boton-control:not(:disabled):hover { transform: translateY(-2px); }
+.boton-control:focus-visible { outline: 2px solid var(--azul); outline-offset: 3px; }
+.boton-iniciar { border-color: rgba(36, 214, 155, .4); background: rgba(36, 214, 155, .10); color: var(--verde); }
+.boton-iniciar:not(:disabled):hover { background: rgba(36, 214, 155, .20); }
+.boton-detener { border-color: rgba(255, 88, 104, .4); background: rgba(255, 88, 104, .10); color: var(--rojo); }
+.boton-detener:not(:disabled):hover { background: rgba(255, 88, 104, .20); }
+.boton-control:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+
+/* CONTENIDO GENERAL */
+main { max-width: 1500px; margin: 0 auto; padding: 28px 30px 36px; }
+.encabezado-seccion {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+h2 { margin: 0; font-size: 17px; font-weight: 700; letter-spacing: .2px; }
+.etiqueta { color: var(--texto-secundario); font-size: 12px; }
+
+/* TARJETAS DE RESUMEN */
+.resumen {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 34px;
+}
+.resumen-card {
+    position: relative;
+    overflow: hidden;
+    min-width: 0;
+    padding: 24px;
+    border: 1px solid var(--borde);
+    border-radius: 14px;
+    background: linear-gradient(145deg, var(--panel), #0e1722);
+    box-shadow: 0 6px 22px rgba(0, 0, 0, .12);
+    transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+.resumen-card::before {
+    content: "";
+    position: absolute;
+    top: 0; bottom: 0; left: 0;
+    width: 3px;
+    background: var(--azul);
+    opacity: .75;
+}
+.resumen-card:nth-child(2)::before { background: var(--verde); }
+.resumen-card:nth-child(3)::before { background: var(--rojo); }
+.resumen-card:nth-child(4)::before { background: var(--amarillo); }
+.resumen-card:hover { transform: translateY(-3px); border-color: #3c536c; box-shadow: 0 10px 28px rgba(0, 0, 0, .22); }
+.resumen-titulo { color: var(--texto-secundario); font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; }
+.resumen-valor { margin-top: 16px; font-size: 34px; font-weight: 750; letter-spacing: -1px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.resumen-nota { margin-top: 10px; color: var(--texto-secundario); font-size: 11px; line-height: 1.5; }
+
+/* TARJETAS INDIVIDUALES DE PLC */
+.dispositivos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.plc {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--borde);
+    border-radius: 14px;
+    background: linear-gradient(155deg, #142031, var(--panel) 75%);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, .10);
+    transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+.plc:hover { border-color: #3a5169; box-shadow: 0 10px 26px rgba(0, 0, 0, .19); transform: translateY(-2px); }
+.plc-cabecera {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 18px 19px;
+    border-bottom: 1px solid var(--borde);
+    background: rgba(255, 255, 255, .015);
+}
+.plc-nombre { font-size: 15px; font-weight: 750; letter-spacing: .2px; }
+.plc-modelo { margin-top: 5px; color: var(--texto-secundario); font-size: 11px; }
+.indicador { display: inline-flex; align-items: center; gap: 7px; font-size: 10px; font-weight: 700; white-space: nowrap; }
+.punto { display: inline-block; flex: 0 0 auto; width: 8px; height: 8px; border-radius: 50%; background: var(--amarillo); box-shadow: 0 0 0 3px rgba(255, 200, 87, .09); }
+.plc-contenido { padding: 19px; }
+.dato { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; }
+.dato:last-child { margin-bottom: 0; }
+.dato-label { flex: 0 1 48%; color: var(--texto-secundario); font-size: 12px; line-height: 1.4; }
+.dato-valor { min-width: 0; max-width: 62%; font-size: 12px; font-weight: 650; text-align: right; overflow-wrap: anywhere; line-height: 1.4; }
+.cronometro { color: var(--azul); font-family: Consolas, "Courier New", monospace; font-size: 12px; font-variant-numeric: tabular-nums; }
+.estado-falla { color: var(--amarillo); }
+
+/* PIE INFORMATIVO */
+.pie {
+    margin-top: 30px;
+    padding: 18px 20px;
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    background: rgba(17, 27, 40, .55);
+    color: var(--texto-secundario);
+    font-size: 11px;
+    line-height: 1.75;
+}
+.pie strong { color: var(--texto); }
+
+/* DISEÑO RESPONSIVO */
+@media (max-width: 1100px) {
+    .dispositivos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .resumen { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 650px) {
+    header { align-items: flex-start; flex-direction: column; padding: 18px; }
+    .controles-sistema { justify-content: flex-start; width: 100%; }
+    main { padding: 20px 14px 30px; }
+    .dispositivos, .resumen { grid-template-columns: 1fr; }
+    .resumen-card { padding: 20px; }
+    .resumen-valor { font-size: 30px; }
+    .plc-cabecera, .plc-contenido { padding: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .boton-control, .resumen-card, .plc { transition: none; }
+    .boton-control:not(:disabled):hover, .resumen-card:hover, .plc:hover { transform: none; }
+}
+
+
+/* IDENTIFICACIÓN DE FABRICANTES (no representa estado de conexión) */
+.plc { position: relative; }
+.plc::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    background: var(--borde);
+}
+.plc-allen-bradley::before { background: #36d6a4; }
+.plc-schneider::before { background: #55b9f6; }
+.plc-siemens::before { background: #f4bf4f; }
+.plc-identificacion { min-width: 0; }
+.plc-fabricante {
+    margin-bottom: 7px;
+    color: var(--texto-secundario);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+.plc-allen-bradley .plc-fabricante { color: #36d6a4; }
+.plc-schneider .plc-fabricante { color: #55b9f6; }
+.plc-siemens .plc-fabricante { color: #f4bf4f; }
+.indicador { flex-shrink: 0; }
+@media (max-width: 420px) {
+    .plc-cabecera { align-items: flex-start; flex-wrap: wrap; }
+    .indicador { white-space: normal; }
+}
+
+/* ==========================================
+   MODERNIZACIÓN DE TARJETAS PLC
+   La identidad del fabricante no indica conexión.
+   Los colores operativos los actualiza supervisor.js.
+   ========================================== */
+.plc { isolation: isolate; }
+.plc-cabecera { min-height: 116px; align-items: flex-start; }
+.plc-nombre { font-size: 19px; letter-spacing: .35px; }
+.plc-modelo { font-size: 12px; }
+.plc-modo {
+    display: inline-block;
+    margin-top: 11px;
+    padding: 5px 8px;
+    border: 1px solid var(--borde);
+    border-radius: 5px;
+    background: rgba(255,255,255,.025);
+    color: var(--texto-secundario);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .5px;
+}
+.plc .indicador {
+    max-width: 55%;
+    min-height: 28px;
+    padding: 6px 9px;
+    border: 1px solid var(--borde);
+    border-radius: 7px;
+    background: rgba(7, 14, 23, .45);
+    line-height: 1.35;
+}
+.plc .indicador > span:last-child { overflow-wrap: anywhere; white-space: normal; }
+.plc .punto { flex-shrink: 0; }
+.plc-contenido .dato {
+    padding: 0 0 12px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid rgba(143,162,183,.10);
+}
+.plc-contenido .dato:last-child { padding-bottom: 0; border-bottom: 0; margin-bottom: 0; }
+.plc .dato-valor { font-variant-numeric: tabular-nums; }
+.plc-allen-bradley { --marca-plc: #36d6a4; }
+.plc-schneider { --marca-plc: #55b9f6; }
+.plc-siemens { --marca-plc: #f4bf4f; }
+.plc-generico { --marca-plc: #8fa2b7; }
+.plc::before { background: var(--marca-plc, var(--borde)); }
+.plc:focus-within { outline: 2px solid var(--azul); outline-offset: 2px; }
+@media (max-width: 420px) {
+    .plc .indicador { max-width: 100%; }
+}
+
+/* ==========================================
+   PASO 340 | INDICADORES Y CRONOMETROS
+   Los colores de estado siguen controlados
+   por supervisor.js; no se simulan alarmas.
+   ========================================== */
+.plc .indicador {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 36px;
+    padding: 9px 12px;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    background: rgba(8, 13, 20, 0.55);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    line-height: 1.35;
+}
+
+.plc .punto {
+    flex-shrink: 0;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--amarillo);
+    box-shadow: 0 0 8px currentColor;
+}
+
+.plc .cronometro {
+    font-family: Consolas, "Courier New", monospace;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: var(--azul);
+}
+
+@media (max-width: 420px) {
+    .plc .indicador {
+        max-width: 100%;
+    }
+}
+
+/* ==========================================
+   PANEL DE DETALLES TECNICOS - PLC
+   La comunicacion y los estados siguen
+   actualizandose desde supervisor.js.
+   ========================================== */
+.plc .plc-datos-principales .dato {
+    padding: 10px 0;
+}
+.plc .plc-datos-principales .dato:last-child {
+    margin-bottom: 0;
+}
+.plc-detalles {
+    margin-top: 14px;
+    border-top: 1px solid var(--borde);
+}
+.plc-detalles > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 15px 2px 4px;
+    color: var(--azul);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+}
+.plc-detalles > summary::-webkit-details-marker {
+    display: none;
+}
+.plc-detalles > summary::after {
+    content: "+";
+    font-size: 19px;
+    line-height: 1;
+}
+.plc-detalles[open] > summary::after {
+    content: "−";
+}
+.plc-detalles > summary:focus-visible {
+    outline: 2px solid var(--azul);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+.plc-detalles-contenido {
+    margin-top: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    background: rgba(8, 13, 20, 0.4);
+}
+.plc-detalles-contenido .dato {
+    padding: 9px 0;
+    margin: 0;
+}
+.plc-detalles-contenido .dato:last-child {
+    padding-bottom: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+    .plc, .resumen-card, .boton-control {
+        transition: none;
+    }
+}

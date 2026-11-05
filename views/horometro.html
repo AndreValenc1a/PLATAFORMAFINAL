@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Horómetro y mantenimiento | PLATAFORMAFINAL</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,Segoe UI,Arial,sans-serif}*{box-sizing:border-box}
+body{background:#0c1420;color:#e7eef7;margin:0}main{max-width:1220px;margin:auto;padding:22px}
+header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+h1{font-size:1.55rem;margin-bottom:6px}h2{font-size:1.13rem}a{color:#89c9ff}
+.panel{border:1px solid #2c4057;background:#162335;border-radius:12px;padding:18px;margin:16px 0}
+.muted{color:#aebfd2}.bar{display:flex;align-items:end;gap:12px;flex-wrap:wrap}
+label{display:flex;flex-direction:column;gap:6px;margin:10px 0}input,select,textarea,button{font:inherit;border-radius:7px;padding:10px;background:#0d1928;color:#f1f6ff;border:1px solid #415b74}
+button{background:#155b85;cursor:pointer}button:hover{background:#1a719f}button:disabled{opacity:.55;cursor:wait}
+textarea{min-height:80px;width:100%}.tablewrap{overflow:auto}table{border-collapse:collapse;width:100%;min-width:880px}
+th,td{padding:10px;border-bottom:1px solid #304154;text-align:left;font-size:.89rem}
+.pill{display:inline-block;padding:5px 9px;border-radius:30px;background:#354559;color:#e4e9f3;font-size:.76rem;font-weight:700}
+.realizado{background:#174e40;color:#a6f4d5}.pendiente{background:#60441d;color:#ffdc9a}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px}
+.tareas{display:grid;gap:10px}.tarea{display:flex;flex-direction:row;align-items:flex-start;gap:10px;margin:0;padding:9px;border:1px solid #304154;border-radius:8px}
+.tarea input{margin:3px 0 0;flex:none}.tarea span{flex:1}.notice{border-left:4px solid #e5aa4b;padding:9px 12px;background:#342b22}
+#mensaje,#resultado{min-height:1.4em}small{color:#aebfd2}
+
+/* Navegación compartida de PLATAFORMAFINAL */
+.navegacion-modulos{display:flex;flex-wrap:wrap;gap:12px;padding:15px 0;margin:12px 0 20px;border-bottom:1px solid #304154}
+.enlace-modulo{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 17px;border:1px solid #34465c;border-radius:10px;background:#192638;color:#dce8f5;text-decoration:none;font-size:14px;font-weight:600;transition:background .2s,border-color .2s}
+.enlace-modulo:hover{background:#263c55;border-color:#4b80b3}
+.enlace-modulo.activo{background:#16466c;border-color:#3895db;color:white}
+.enlace-modulo:focus-visible{outline:2px solid #79c4ff;outline-offset:3px}
+@media(max-width:600px){.enlace-modulo{flex:1 1 100%}}
+
+/* HOROMETRO · PANEL VISUAL */
+body{background:radial-gradient(ellipse at 80% 0%,#193452 0%,transparent 45%),#080e18}
+main{max-width:1500px;padding:24px clamp(14px,3vw,38px) 55px}
+.page-intro{padding:28px 28px 20px;border:1px solid #2a4260;border-radius:18px;background:linear-gradient(115deg,#142942,#111b2b);margin-bottom:12px}
+.page-intro h1{font-size:clamp(25px,3vw,35px);margin:8px 0}.page-intro p{color:#aabed4;margin:0}
+body>main>header{display:none}
+.panel{border:1px solid #293c53;background:linear-gradient(145deg,#142337,#101b2b);border-radius:16px;padding:clamp(17px,2vw,26px);box-shadow:0 10px 25px #0002}
+.panel h2{font-size:18px;margin:0 0 12px}.panel .muted{line-height:1.55}
+.bar{justify-content:space-between;align-items:center}.bar label{margin:0;flex:1;min-width:180px;max-width:320px}
+button{border-radius:10px;background:linear-gradient(110deg,#236da8,#207dc0);font-weight:700;transition:transform .2s,filter .2s}
+button:not(:disabled):hover{transform:translateY(-1px);filter:brightness(1.16)}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid #70c5ff;outline-offset:2px}
+.metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin:20px 0}
+.metric{position:relative;overflow:hidden;border:1px solid #2c425b;border-radius:15px;background:#142236;padding:21px 22px}
+.metric::before{content:'';position:absolute;inset:0 auto 0 0;width:3px;background:var(--accent,#5aaeff)}
+.metric-label{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#9eb4cc}
+.metric-value{font-size:clamp(23px,2.7vw,34px);font-weight:800;margin:12px 0 5px;font-variant-numeric:tabular-nums}
+.metric-sub{font-size:12px;color:#9eb4cc}
+.section-head{display:flex;justify-content:space-between;gap:15px;align-items:center;flex-wrap:wrap;margin-bottom:15px}
+.view-switch{display:flex;gap:5px;background:#0a1726;padding:4px;border-radius:11px;border:1px solid #29425d}
+.view-switch button{background:transparent;padding:8px 13px;border:0;font-size:12px;color:#a8bdd2}
+.view-switch button.selected{background:#24476a;color:#fff}
+.chart-list{display:grid;gap:12px;margin:18px 0 24px}
+.chart-row{display:grid;grid-template-columns:minmax(155px,230px) 1fr 82px;gap:15px;align-items:center}
+.chart-name{font-size:12px;font-weight:700}.chart-name small{display:block;color:#91a8c0;font-weight:400;margin-top:3px}
+.track{height:12px;background:#0a1523;border-radius:99px;overflow:hidden;border:1px solid #293f55}
+.fill{height:100%;background:linear-gradient(90deg,#2d82ca,#3dd8b4);border-radius:99px;transition:width .45s ease}
+.chart-hours{text-align:right;font-size:12px;font-weight:800;font-variant-numeric:tabular-nums}
+.tablewrap{border:1px solid #2c3f55;border-radius:11px;overflow:auto}
+table{min-width:930px}th{background:#172b41;color:#a8c1dc;text-transform:uppercase;font-size:10px;letter-spacing:.7px;white-space:nowrap}
+th,td{padding:14px 12px}tbody tr:hover{background:#ffffff08}
+.pill{border-radius:7px}.notice{border-radius:9px;background:#3b2c1d;border-left-color:#ffc36b}
+.tarea{border-radius:10px;padding:13px;background:#0d1a2a;transition:border-color .2s}
+.tarea:has(input:checked){border-color:#2c987a;background:#12382f}
+.tarea input{accent-color:#35d4a5;width:17px;height:17px}
+#guardar{padding:14px 21px;margin-top:12px}#resultado{margin-top:12px}
+.week-strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:15px 0 22px}
+.day-card{background:#0c1b2d;border:1px solid #284057;border-radius:11px;padding:13px}
+.day-name{font-size:11px;color:#9eb4cc}.day-value{font-size:18px;font-weight:800;margin-top:7px}
+.day-track{height:5px;border-radius:6px;background:#223b52;margin-top:10px;overflow:hidden}.day-track>span{display:block;height:100%;background:#5aaeff}
+#empty-chart{color:#a9bfd6;font-size:13px}
+@media(max-width:1000px){.metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.metric-grid{grid-template-columns:1fr 1fr;gap:9px}.metric{padding:15px}.metric-value{font-size:23px}.chart-row{grid-template-columns:105px 1fr 60px;gap:8px}.chart-name{font-size:11px}.week-strip{gap:5px}.day-card{padding:8px}.day-value{font-size:12px}.day-name{font-size:10px}.page-intro{padding:20px}}
+@media(prefers-reduced-motion:reduce){.fill,button{transition:none}}
+
+/* Control semanal y estado de servicio, consistente con Reportes */
+.page-intro{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:18px}
+.api-state{border:1px solid #3c526b;border-radius:99px;padding:9px 14px;font-weight:700;font-size:12px;color:#9fb4cd;white-space:nowrap}
+.api-state.good{color:#2cdbac;border-color:#267f6b;background:#12362f}
+.api-state.bad{color:#ff667a;border-color:#9a4350;background:#3a202c}
+.period-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px}
+.period-head h2{margin:0}.period-sub{color:#9fb4cd;font-size:12px}
+.period-controls{display:flex;align-items:end;gap:12px;flex-wrap:wrap}
+.period-controls .field{display:flex;flex-direction:column;gap:6px;margin:0;min-width:190px;flex:0 1 auto;max-width:none;color:#9fb4cd;font-size:12px;font-weight:650}
+.period-controls .field input{min-height:42px;min-width:190px;border-radius:9px;padding:9px 12px}
+.period-controls button{min-height:42px;background:#1a2b40;border:1px solid #38506a;padding:10px 16px}
+.period-controls #actualizar{background:#176194;border-color:#397eb6}
+#mensaje{display:block;margin-top:12px;font-size:12px}#mensaje.error{color:#ff667a}
+@media(max-width:650px){.period-controls .field,.period-controls .field input{width:100%;max-width:none}.period-controls button{flex:1}}
+</style>
+<link rel="stylesheet" href="/css/experiencia-fase7.css">
+</head><body><main>
+<div class="page-intro"><div><div class="eyebrow">PLATAFORMAFINAL · HOROMETRO</div><h1>Horómetro y mantenimiento</h1><p>Gestión y consulta de activos industriales · Información proporcionada por los servicios existentes</p></div><div class="api-state" id="api-state" role="status" aria-live="polite">● Consultando servicio…</div></div>
+<p class="scada-horometro-annotation">Registro de comunicación confirmada · Ecuador (UTC−5) · Mantenimiento con verificación del responsable</p>
+<nav class="navegacion-modulos" aria-label="Navegación principal">
+<a href="/" class="enlace-modulo" data-modulo="supervision"><span class="nav-icon">▦</span><span>Supervisión</span></a>
+<a href="/horometro" class="enlace-modulo activo" data-modulo="horometro" aria-current="page"><span class="nav-icon">◷</span><span>Horómetro y mantenimiento</span></a>
+<a href="/eventos" class="enlace-modulo" data-modulo="eventos"><span class="nav-icon">⚠</span><span>Eventos y alarmas</span></a>
+<a href="/reportes" class="enlace-modulo" data-modulo="reportes"><span class="nav-icon">▤</span><span>Reportes PDF</span></a>
+</nav>
+<section class="panel"><div class="period-head"><h2>Período de análisis</h2><span class="period-sub" id="periodo">—</span></div><div class="period-controls"><label class="field">Semana a consultar<input id="fecha" type="date"></label><button type="button" id="prev">← Semana anterior</button><button type="button" id="next">Semana siguiente →</button><button type="button" id="actualizar">↻ Actualizar</button></div><span id="mensaje" class="muted" role="status" aria-live="polite">Esperando consulta…</span></section>
+<section class="metric-grid" aria-label="Indicadores de horómetro">
+<div class="metric" style="--accent:#5aaeff"><div class="metric-label">PLC registrados</div><div class="metric-value" id="kpi-equipos">—</div><div class="metric-sub">Equipos del inventario</div></div>
+<div class="metric" style="--accent:#3dd8b4"><div class="metric-label">Comunicación acumulada</div><div class="metric-value" id="kpi-horas">—</div><div class="metric-sub">Horas registradas · L–V</div></div>
+<div class="metric" style="--accent:#ffc36b"><div class="metric-label">Mantenimiento pendiente</div><div class="metric-value" id="kpi-pendientes">—</div><div class="metric-sub">Según planificación semanal</div></div>
+<div class="metric" style="--accent:#9c9cff"><div class="metric-label">Mantenimiento realizado</div><div class="metric-value" id="kpi-realizados">—</div><div class="metric-sub">Registros confirmados</div></div>
+</section>
+<section class="panel"><div class="section-head"><div><h2>Actividad semanal por PLC</h2><p class="muted">Comparación visual de horas con comunicación válida; las barras no representan energización física.</p></div><div class="view-switch" aria-label="Orden de barras"><button id="orden-horas" type="button" class="selected">Más horas</button><button id="orden-plc" type="button">Por PLC</button></div></div><div id="grafico" class="chart-list"><p id="empty-chart">Esperando datos del horómetro…</p></div><h2>Distribución por día</h2><div id="dias-visual" class="week-strip"></div></section>
+<section class="panel"><h2>Horómetro de lunes a viernes</h2><p class="muted" id="rango"></p>
+<div class="tablewrap"><table><thead><tr><th>PLC</th><th>IP</th><th>Lun</th><th>Mar</th><th>Mié</th><th>Jue</th><th>Vie</th><th>Total L–V</th><th>Mantenimiento</th></tr></thead><tbody id="tabla"></tbody></table></div></section>
+<section class="panel"><h2>Plan semanal de mantenimiento</h2><p id="aviso" class="notice"></p>
+<div class="grid"><label>Seleccionar PLC<select id="plc"></select></label><div><p><strong>Fecha programada:</strong> <span id="viernes"></span></p><p><strong>Estado:</strong> <span id="estado"></span></p><p class="muted" id="advertencia"></p></div></div>
+<h2>Lista de verificación</h2><p class="muted">Marca solamente las actividades que realmente se hayan realizado.</p><div id="tareas" class="tareas"></div>
+<div class="grid"><label>Responsable<input id="responsable" maxlength="100" placeholder="Nombre y apellido"></label><label>Observaciones<textarea id="observaciones" maxlength="1000" placeholder="Novedades, mediciones, acciones pendientes..."></textarea></label></div>
+<button id="guardar">Registrar mantenimiento realizado</button><p id="resultado" aria-live="polite"></p></section>
+<p class="muted"><small>Los horarios son orientativos. Las listas deben validarse con los procedimientos del laboratorio y los manuales de los equipos. Un PLC desconectado también requiere revisión. El horómetro NO representa horas físicas de energización.</small></p>
+</main><script>
+"use strict";
+const $=id=>document.getElementById(id);let actual=null,numeroConsulta=0;
+const tiempo=s=>`${Math.floor((Number(s)||0)/3600)} h ${String(Math.floor(((Number(s)||0)%3600)/60)).padStart(2,"0")} min`;
+function semanaDe(d){const f=new Date(d+"T12:00:00Z");f.setUTCDate(f.getUTCDate()-(f.getUTCDay()||7)+1);return f.toISOString().slice(0,10);}
+function sumarDias(fecha,dias){const f=new Date(fecha+"T12:00:00Z");f.setUTCDate(f.getUTCDate()+dias);return f.toISOString().slice(0,10);}
+function cambiarSemana(dias){$("fecha").value=sumarDias(semanaDe($("fecha").value),dias);cargar();}
+function estadoServicio(disponible){const el=$("api-state");el.className="api-state "+(disponible?"good":"bad");el.textContent=disponible?"● Servicio disponible":"● Servicio no disponible";}
+async function comprobarServicio(){try{const r=await fetch("/api/horometro?semana="+encodeURIComponent(semanaDe($("fecha").value)),{cache:"no-store",signal:AbortSignal.timeout(6000)});if(!r.ok)throw Error("HTTP "+r.status);estadoServicio(true);}catch(_){estadoServicio(false);}}
+function hoyEcuador(){const p=Object.fromEntries(new Intl.DateTimeFormat("en-CA",{timeZone:"America/Guayaquil",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(new Date()).filter(x=>x.type!=="literal").map(x=>[x.type,x.value]));return `${p.year}-${p.month}-${p.day}`;}
+function celda(tr,valor){const td=document.createElement("td");td.textContent=String(valor);tr.append(td);return td;}
+function planSeleccionado(){return actual?.planes.find(p=>String(p.id)===$("plc").value);}
+function pintarPlan(){
+ const p=planSeleccionado();$("tareas").replaceChildren();if(!p)return;
+ $("viernes").textContent=p.fechaProgramada;$("estado").textContent=p.estado;
+ $("advertencia").textContent=p.requiereRevisionSinComunicacion?"Sin tiempo de comunicación registrado esta semana: revisar conectividad y alimentación.":"";
+ const registro=p.registro;
+ $("responsable").value=registro?.responsable||"";
+ $("observaciones").value=registro?.observaciones||"";
+ for(const tarea of p.tareasSugeridas){
+  const label=document.createElement("label");label.className="tarea";
+  const check=document.createElement("input");check.type="checkbox";check.value=tarea;
+  check.checked=Boolean(registro?.tareas.includes(tarea));
+  const span=document.createElement("span");span.textContent=tarea;label.append(check,span);$("tareas").append(label);
+ }
+ $("resultado").textContent=registro?`Registrado: ${new Date(registro.fecha).toLocaleString("es-EC")}`:"";
+}
+async function cargar(){
+ const consulta=++numeroConsulta;
+ $("mensaje").classList.remove("error");
+ try{
+  const seleccionado=$("plc").value;$("mensaje").textContent="Consultando...";
+  const res=await fetch("/api/horometro?semana="+encodeURIComponent(semanaDe($("fecha").value)),{cache:"no-store"});
+  if(!res.ok)throw Error("HTTP "+res.status);const d=await res.json();
+   if(!Array.isArray(d.equipos)||!Array.isArray(d.planes)||!Array.isArray(d.dias))throw Error("Respuesta incompleta");
+   if(consulta!==numeroConsulta)return;
+   estadoServicio(true);actual=d;
+   $("periodo").textContent=`${d.dias[0]} — ${d.dias[d.dias.length-1]}`;
+  $("rango").textContent=`Del ${d.dias[0]} al ${d.dias[4]} · mantenimiento programado: ${d.dias[4]}`;
+  $("aviso").textContent=d.planes.filter(p=>p.estado==="PENDIENTE").length?`${d.planes.filter(p=>p.estado==="PENDIENTE").length} equipos con mantenimiento pendiente.`:`Mantenimientos realizados: ${d.planes.filter(p=>p.estado==="REALIZADO").length} de ${d.planes.length}. Los restantes están programados.`;
+  $("tabla").replaceChildren();$("plc").replaceChildren();
+  for(const e of d.equipos){
+   const tr=document.createElement("tr");celda(tr,`PLC-${String(e.id).padStart(2,"0")} · ${e.modelo}`);celda(tr,e.ip);
+   for(const s of e.diario.slice(0,5))celda(tr,tiempo(s));
+   celda(tr,tiempo(e.diario.slice(0,5).reduce((a,b)=>a+b,0)));
+   const p=d.planes.find(p=>String(p.id)===String(e.id));const td=celda(tr,p?.estado||"SIN PLAN");
+   const cls=p?.estado==="REALIZADO"?"realizado":p?.estado==="PENDIENTE"?"pendiente":"";
+   const pill=document.createElement("span");pill.className=`pill ${cls}`;pill.textContent=p?.estado||"SIN PLAN";td.replaceChildren(pill);
+   $("tabla").append(tr);
+   const op=document.createElement("option");op.value=e.id;op.textContent=`PLC-${e.id} · ${e.modelo} · ${e.ip}`;$("plc").append(op);
+  }
+  if([...$("plc").options].some(o=>o.value===seleccionado))$("plc").value=seleccionado;
+  pintarPlan();actualizarVisual(d);$("mensaje").textContent="Actualizado";
+ }catch(e){if(consulta!==numeroConsulta)return;estadoServicio(false);$("mensaje").textContent="Error: "+e.message;$("mensaje").classList.add("error");}
+}
+$("fecha").value=hoyEcuador();$("actualizar").onclick=cargar;$("fecha").addEventListener("change", cargar);$("prev").addEventListener("click",()=>cambiarSemana(-7));$("next").addEventListener("click",()=>cambiarSemana(7));$("plc").onchange=pintarPlan;
+$("guardar").onclick=async()=>{
+ try{
+  if(!actual)throw Error("Primero consulta una semana");
+  const tareas=[...$("tareas").querySelectorAll("input:checked")].map(x=>x.value);
+  if(!tareas.length)throw Error("Marca al menos una actividad realizada");
+  const responsable=$("responsable").value.trim();if(!responsable)throw Error("Indica el responsable");
+  const body={semana:actual.semana,id:$("plc").value,tareas,responsable,observaciones:$("observaciones").value};
+  const boton=$("guardar");boton.disabled=true;
+  try{
+   const res=await fetch("/api/horometro/mantenimiento",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+   const dato=await res.json();if(!res.ok)throw Error(dato.error||"Error al guardar");
+   await cargar();$("resultado").textContent="Mantenimiento registrado correctamente";
+  }finally{boton.disabled=false;}
+ }catch(e){$("resultado").textContent="Error: "+e.message;}
+};
+cargar();setInterval(()=>{if(document.hidden)return; if(!$("responsable").value && !$("observaciones").value)cargar();else comprobarServicio();},15000);
+
+let ordenVisual='horas';
+function crear(tag,clase,contenido){const e=document.createElement(tag);if(clase)e.className=clase;if(contenido!==undefined)e.textContent=String(contenido);return e}
+function actualizarVisual(d){
+ const equipos=Array.isArray(d.equipos)?d.equipos:[];
+ const planes=Array.isArray(d.planes)?d.planes:[];
+ const segundos=equipos.reduce((s,e)=>s+(Array.isArray(e.diario)?e.diario.slice(0,5).reduce((a,v)=>a+(Number(v)||0),0):0),0);
+ $('kpi-equipos').textContent=equipos.length;
+ $('kpi-horas').textContent=(segundos/3600).toFixed(1)+' h';
+ $('kpi-pendientes').textContent=planes.filter(p=>p.estado==='PENDIENTE').length;
+ $('kpi-realizados').textContent=planes.filter(p=>p.estado==='REALIZADO').length;
+ const lista=equipos.map(e=>({...e,horas:(Array.isArray(e.diario)?e.diario.slice(0,5).reduce((a,v)=>a+(Number(v)||0),0):0)/3600}));
+ lista.sort(ordenVisual==='horas'?(a,b)=>b.horas-a.horas:(a,b)=>Number(a.id)-Number(b.id));
+ const max=Math.max(...lista.map(e=>e.horas),0);
+ $('grafico').replaceChildren();
+ if(!lista.length)$('grafico').append(crear('p','muted','Sin datos de equipos para esta semana.'));
+ for(const e of lista){
+  const row=crear('div','chart-row');const nombre=crear('div','chart-name',`PLC-${String(e.id).padStart(2,'0')} · ${e.modelo}`);
+  nombre.append(crear('small','',e.ip));
+  const track=crear('div','track');const fill=crear('div','fill');fill.style.width=(max>0?100*e.horas/max:0)+'%';
+  track.append(fill);const horas=crear('div','chart-hours',e.horas.toFixed(1)+' h');row.append(nombre,track,horas);$('grafico').append(row);
+ }
+ const totales=Array.from({length:5},(_,i)=>equipos.reduce((s,e)=>s+(Number(e.diario?.[i])||0),0));
+ const maxDia=Math.max(...totales,0);
+ $('dias-visual').replaceChildren();
+ ['Lunes','Martes','Miércoles','Jueves','Viernes'].forEach((nombre,i)=>{
+  const card=crear('div','day-card');card.append(crear('div','day-name',nombre),crear('div','day-value',(totales[i]/3600).toFixed(1)+' h'));
+  const track=crear('div','day-track'),fill=crear('span');fill.style.width=(maxDia>0?100*totales[i]/maxDia:0)+'%';track.append(fill);card.append(track);$('dias-visual').append(card);
+ });
+}
+$('orden-horas').addEventListener('click',()=>{ordenVisual='horas';$('orden-horas').classList.add('selected');$('orden-plc').classList.remove('selected');if(actual)actualizarVisual(actual)});
+$('orden-plc').addEventListener('click',()=>{ordenVisual='plc';$('orden-plc').classList.add('selected');$('orden-horas').classList.remove('selected');if(actual)actualizarVisual(actual)});
+</script><script src="/js/experiencia-fase7.js" defer></script>
+</body></html>

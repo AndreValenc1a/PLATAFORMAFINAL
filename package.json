@@ -1,0 +1,22 @@
+﻿{
+    "name":  "plataformafinal",
+    "version":  "1.0.0",
+    "description":  "",
+    "main":  "main.js",
+    "scripts":  {
+                    "test":  "echo \"Error: no test specified\" \u0026\u0026 exit 1"
+                },
+    "keywords":  [
+
+                 ],
+    "author":  "",
+    "license":  "ISC",
+    "type":  "commonjs",
+    "dependencies":  {
+                         "dotenv":  "^18.0.9",
+                         "ethernet-ip":  "^2.0.0",
+                         "mysql2":  "^3.24.6",
+                         "nodepccc":  "^0.1.17",
+                         "pdfkit":  "^0.20.2"
+                     }
+}

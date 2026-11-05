@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eventos y alarmas | Industrial Monitor</title>
+<link rel="stylesheet" href="/css/experiencia-fase7.css">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#080e18;--surface:#111e2e;--surface2:#16263a;--surface3:#102030;--border:#2b4059;
+  --text:#edf5ff;--muted:#9fb4cd;--blue:#65b6ff;--green:#2cdbac;--red:#ff667a;
+  --yellow:#ffcd72;--violet:#b8a2ff;--cyan:#78d5ff;--teal:#3fe0c0;--orange:#ffaf68;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(ellipse at 80% 0%,#193452 0%,transparent 44%),var(--bg);color:var(--text);font:14px/1.5 'Segoe UI',system-ui,Arial,sans-serif}
+main{max-width:1500px;margin:auto;padding:24px clamp(14px,3vw,38px) 60px}
+a{color:inherit}
+.hero{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;background:linear-gradient(115deg,#152b44,#101b2b);border:1px solid #304a67;border-radius:20px;padding:26px 30px;box-shadow:0 14px 38px #0003}
+.eyebrow{font-size:11px;letter-spacing:2px;color:var(--green);font-weight:800}.hero h1{font-size:clamp(26px,3vw,38px);margin:5px 0}.hero p{margin:0;color:var(--muted);max-width:700px}
+.live{display:flex;align-items:center;gap:9px;border:1px solid #3c526b;border-radius:999px;padding:9px 14px;color:var(--muted);font-weight:700;font-size:12px;background:#122130}.dot{width:9px;height:9px;background:var(--yellow);border-radius:50%}.live.ok .dot{background:var(--green);box-shadow:0 0 12px #2cdbac77}.live.bad .dot{background:var(--red)}
+.nav{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 26px}.nav a{text-decoration:none;padding:11px 15px;border:1px solid var(--border);border-radius:11px;background:#162438;color:#c7d7e9;font-weight:650}.nav a.active{background:#16456a;border-color:#428ac5;color:white}
+.panel{background:#111e2edc;border:1px solid var(--border);border-radius:18px;padding:22px;margin:0 0 20px;box-shadow:0 8px 28px #0002}
+.section-title{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px;margin:0 0 18px}.section-title h2{margin:0;font-size:17px}.section-title span{color:var(--muted);font-size:12px}
+.metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;margin:0 0 22px}.metric{position:relative;overflow:hidden;background:linear-gradient(155deg,#17283c,#101b2a);border:1px solid var(--border);border-radius:16px;padding:19px;min-width:0}.metric:before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent,var(--blue))}.metric .label{color:var(--muted);font-size:11px;font-weight:750;text-transform:uppercase;letter-spacing:.7px}.metric strong{display:block;font-size:clamp(25px,3vw,34px);margin:10px 0 2px;font-variant-numeric:tabular-nums}.metric small{color:var(--muted)}
+.filters{display:grid;grid-template-columns:1.1fr 1fr 1fr 1fr auto;gap:12px;align-items:end}.field{display:flex;flex-direction:column;gap:7px;color:var(--muted);font-size:12px;font-weight:650}.field input,.field select{width:100%;min-height:42px;border:1px solid #3a506c;border-radius:10px;background:#0c1828;color:var(--text);font:inherit;font-size:13px;padding:10px 12px;outline:none}.field input:focus,.field select:focus{border-color:var(--blue);box-shadow:0 0 0 3px #65b6ff22}
+.btn{min-height:42px;border:1px solid #397eb6;border-radius:10px;background:#176194;color:white;font:inherit;font-weight:750;padding:10px 16px;cursor:pointer}.btn:hover{background:#2179b5}.btn.secondary{background:#1a2b40;border-color:#38506a}.btn:disabled{opacity:.5;cursor:wait}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:15px}.toolbar label{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:12px}.toolbar input{accent-color:var(--blue)}#estado{margin-left:auto;color:var(--muted);font-size:12px}
+.visual{display:grid;grid-template-columns:1.1fr .9fr;gap:20px}.bars{display:grid;gap:14px}.barline{display:grid;grid-template-columns:145px 1fr 40px;gap:12px;align-items:center;font-size:12px}.track{height:12px;border-radius:99px;background:#26364a;overflow:hidden}.fill{height:100%;width:0;border-radius:20px;transition:width .5s cubic-bezier(.2,.7,.2,1)}
+.mini-note{color:var(--muted);font-size:12px;margin:15px 0 0}.feed{display:grid;gap:10px;max-height:320px;overflow:auto;padding-right:4px}.feeditem{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:start;padding:12px;border:1px solid #283e56;border-radius:12px;background:linear-gradient(160deg,#122235,#0f1d2e)}.feeditem .stripe{width:10px;min-height:46px;border-radius:99px;background:var(--blue);box-shadow:0 0 18px color-mix(in srgb, var(--stripe-color, var(--blue)) 45%, transparent)}.feeditem strong{display:block;font-size:13px}.feeditem small{color:var(--muted);font-size:11px}.feeditem time{color:var(--muted);font-size:11px;white-space:nowrap}.feedmeta{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tablewrap{overflow-x:auto}table{width:100%;min-width:980px;border-collapse:collapse}th,td{text-align:left;padding:13px 10px;border-bottom:1px solid #2a3c52;vertical-align:middle;font-size:12px}th{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:#a8bdd4;background:#16263a}tbody tr:hover{background:#1a2b40}td small{display:block;color:var(--muted)}.empty{padding:30px;text-align:center;color:var(--muted)}.footnote{font-size:12px;color:var(--muted);line-height:1.7}.error{color:var(--red)!important}
+.badge{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.02em;border:1px solid transparent;background:#203447;color:#d9e8f8;white-space:nowrap}
+.badge::before{content:attr(data-icon);display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.08);font-size:11px}
+.badge.run{background:rgba(44,219,172,.12);border-color:rgba(44,219,172,.35);color:#8ff3d4}.badge.program{background:rgba(255,205,114,.12);border-color:rgba(255,205,114,.35);color:#ffe2a3}.badge.stop{background:rgba(255,102,122,.12);border-color:rgba(255,102,122,.35);color:#ffb8c1}.badge.error{background:rgba(255,102,122,.14);border-color:rgba(255,102,122,.42);color:#ffb8c1}.badge.conexion{background:rgba(44,219,172,.12);border-color:rgba(44,219,172,.35);color:#8ff3d4}.badge.desconexion{background:rgba(255,102,122,.12);border-color:rgba(255,102,122,.35);color:#ffb8c1}.badge.falla{background:rgba(255,175,104,.14);border-color:rgba(255,175,104,.35);color:#ffd2a8}.badge.recuperacion{background:rgba(184,162,255,.12);border-color:rgba(184,162,255,.35);color:#ddd0ff}.badge.identidad{background:rgba(120,213,255,.12);border-color:rgba(120,213,255,.35);color:#c7ecff}.badge.other{background:#33455b;color:#d9e8f8;border-color:#465c77}
+.timeline-tools{display:flex;gap:14px;align-items:end;flex-wrap:wrap;margin:12px 0 18px}.timeline-tools .field{min-width:250px;flex:1}
+.timeline-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:15px 0}.timeline-metric{padding:14px;background:linear-gradient(160deg,#15263a,#0f1d2d);border:1px solid var(--border);border-radius:14px}.timeline-metric small{display:block;color:var(--muted);font-size:11px}.timeline-metric strong{display:block;font-size:25px;margin-top:4px;font-variant-numeric:tabular-nums}
+.timeline-legend{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0}.timeline-legend .badge{padding:6px 9px}
+.timeline-type-strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:16px 0}.type-card{background:linear-gradient(160deg,#142437,#0f1c2b);border:1px solid #2e4257;border-radius:14px;padding:12px 13px;display:flex;flex-direction:column;gap:4px;min-height:82px;position:relative;overflow:hidden}.type-card::after{content:'';position:absolute;inset:auto 0 0 0;height:3px;background:var(--accent,var(--blue))}.type-card strong{font-size:22px;font-variant-numeric:tabular-nums}.type-card span{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em}.type-card small{color:var(--muted);font-size:11px}
+.timeline-list{position:relative;margin:16px 0 0;padding:0 0 0 28px;max-height:620px;overflow-y:auto;scrollbar-width:thin}.timeline-list:before{content:"";position:absolute;top:12px;bottom:12px;left:11px;width:2px;background:linear-gradient(180deg,#35506e,transparent 98%)}
+.timeline-entry{position:relative;margin:0 0 14px;padding:15px 16px 15px 18px;background:linear-gradient(160deg,#16263a,#112031);border:1px solid #2b4059;border-radius:14px;box-shadow:0 10px 24px rgba(0,0,0,.12);transition:transform .24s ease,border-color .24s ease,box-shadow .24s ease}.timeline-entry:hover{transform:translateY(-2px);border-color:#406182;box-shadow:0 16px 30px rgba(0,0,0,.22)}.timeline-entry:before{content:"";position:absolute;left:-22px;top:22px;width:12px;height:12px;background:var(--entry-color,var(--blue));border:3px solid var(--bg);border-radius:50%;box-shadow:0 0 0 2px color-mix(in srgb,var(--entry-color,var(--blue)) 45%, transparent),0 0 16px color-mix(in srgb,var(--entry-color,var(--blue)) 35%, transparent)}
+.timeline-entry-head{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}.timeline-entry-head strong{font-size:16px}.timeline-entry-head time,.timeline-entry p,.timeline-help,.timeline-sub{color:var(--muted);font-size:12px}.timeline-entry p{margin:10px 0 0;overflow-wrap:anywhere}.timeline-entry-detail{display:grid;gap:10px}.timeline-entry-meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.timeline-empty{color:var(--muted);padding:16px 0}
+.period-controls{display:flex;align-items:end;flex-wrap:wrap;gap:12px}.period-controls .field{min-width:210px}.period-range{font-size:12px;color:var(--muted)}.period-help{font-size:12px;color:var(--muted);margin:12px 0 0}
+.legend-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.table-event{display:flex;align-items:center;gap:8px}
+.table-event .badge{max-width:max-content}
+tbody tr{transition:background .2s ease}
+@media(max-width:1100px){.metrics{grid-template-columns:repeat(3,1fr)}.filters{grid-template-columns:repeat(2,1fr)}.visual{grid-template-columns:1fr}.timeline-type-strip{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:700px){.timeline-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.timeline-type-strip{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.hero{padding:21px}.metrics{grid-template-columns:repeat(2,1fr)}.metric{padding:15px}.panel{padding:16px}.filters{grid-template-columns:1fr}.barline{grid-template-columns:105px 1fr 35px}.feeditem{grid-template-columns:auto 1fr}.feeditem time{grid-column:2}.timeline-list{padding-left:24px}#estado{margin-left:0}.period-controls .field,.period-controls .field input{width:100%}.period-controls .btn{flex:1}}
+@media(prefers-reduced-motion:reduce){.fill,.timeline-entry,.type-card,.feeditem{transition:none}}
+
+/* FASE 7.11: iconografía vectorial y color individual por estado.
+   Los iconos sustituyen los puntos; no hay leyendas ni movimiento permanente. */
+#timeline-lista.timeline-list{padding-left:40px;}
+#timeline-lista.timeline-list::before{left:16px;width:2px;background:linear-gradient(180deg,#446b88,#314e6b 74%,rgba(60,91,119,.2));}
+#timeline-lista .timeline-entry{--entry-color:#aac8da;overflow:visible!important;border-left:3px solid var(--entry-color);padding-left:18px;background:linear-gradient(105deg,color-mix(in srgb,var(--entry-color) 8%,#15283e) 0%,#142439 49%,#102033 100%);}
+#timeline-lista .timeline-entry:hover{border-color:color-mix(in srgb,var(--entry-color) 48%,#344d64);border-left-color:var(--entry-color);box-shadow:0 14px 28px rgba(0,0,0,.2),inset 0 1px rgba(255,255,255,.04);}
+#timeline-lista .timeline-entry::before{content:none!important;display:none!important;}
+#timeline-lista .timeline-entry::after{content:none!important;display:none!important;}
+#timeline-lista .timeline-entry .scada-event-icon{
+ position:absolute;left:-38px;top:17px;width:29px;height:29px;
+ border:1px solid color-mix(in srgb,var(--entry-color) 68%,#223a50);
+ border-radius:9px;background:#102338;color:var(--entry-color);
+ display:grid;place-items:center;box-shadow:0 0 0 4px #0e1b2b,0 6px 16px rgba(0,0,0,.15);
+ z-index:2;transition:transform .2s ease,background-color .2s ease,border-color .2s ease;
+}
+#timeline-lista .timeline-entry .scada-event-icon svg{display:block;width:16px;height:16px;flex-shrink:0;}
+#timeline-lista .timeline-entry:hover .scada-event-icon{transform:translateX(2px);background:color-mix(in srgb,var(--entry-color) 16%,#102338);}
+#timeline-lista .timeline-entry .timeline-event-name{color:var(--entry-color)!important;font-size:15px;}
+#timeline-lista .timeline-entry .timeline-entry-head time{color:#bdcede;font-weight:500;}
+#timeline-lista .timeline-entry .timeline-duration{color:color-mix(in srgb,var(--entry-color) 68%,#c4d5e1);}
+/* Colores estables en barras, actividad reciente y detalle tabular. */
+#actividad .feeditem{--event-accent:#8bc4e4;border-left:2px solid var(--event-accent);background:linear-gradient(130deg,color-mix(in srgb,var(--event-accent) 6%,#15273b),#102032 75%);}
+#actividad .feeditem .stripe{background:var(--event-accent)!important;box-shadow:none;}
+#actividad .feeditem:hover{border-color:color-mix(in srgb,var(--event-accent) 48%,#30485d);}
+body .badge{--event-accent:#bed0df;border:1px solid color-mix(in srgb,var(--event-accent) 38%,#304558)!important;color:var(--event-accent)!important;background:color-mix(in srgb,var(--event-accent) 11%,#1a2b3e)!important;font-weight:800;letter-spacing:.01em;}
+body #barras .badge{background:transparent!important;border:0!important;color:var(--event-accent)!important;}
+body .badge::before{content:none!important;display:none!important;}
+#filas tr td.table-event .badge{border-radius:8px;font-size:11px;}
+#timeline-lista .timeline-event-new{animation:timeline-new-event .45s cubic-bezier(.2,.72,.18,1) var(--item-delay,0ms) both;}
+@media(max-width:640px){
+ #timeline-lista.timeline-list{padding-left:36px;}
+ #timeline-lista.timeline-list::before{left:13px;}
+ #timeline-lista .timeline-entry .scada-event-icon{left:-34px;width:27px;height:27px;top:17px;border-radius:8px;}
+ #timeline-lista .timeline-entry .scada-event-icon svg{width:15px;height:15px;}
+ #timeline-lista .timeline-entry .timeline-event-name{font-size:14px;}
+}
+@media(prefers-reduced-motion:reduce){
+ #timeline-lista .timeline-entry .scada-event-icon{transition:none!important;}
+ #timeline-lista .timeline-entry:hover .scada-event-icon{transform:none!important;}
+ #timeline-lista .timeline-event-new{animation:none!important;}
+}
+
+</style>
+<style>
+
+/* FASE 7.10 · Timeline sobrio tipo SCADA: nodos de color, sin leyendas redundantes */
+.badge{font-size:11px;padding:5px 10px;border-radius:9px;letter-spacing:.005em}
+.badge::before{display:none!important;content:none!important}
+.legend-row,.timeline-legend,.timeline-type-strip{display:none!important}
+.timeline-list{
+  position:relative;max-height:600px;overflow-x:hidden;overflow-y:auto;
+  padding:2px 8px 3px 29px;margin:18px 0 4px;
+  scrollbar-gutter:stable;scroll-behavior:auto!important;overflow-anchor:none;
+  scrollbar-color:#53728d #0e1b29;scrollbar-width:thin
+}
+.timeline-list::before{
+  content:"";position:absolute;left:12px;top:12px;bottom:14px;width:2px;
+  background:linear-gradient(180deg,#4d7697 0%,#365977 65%,rgba(66,94,116,.25) 100%);
+  border-radius:3px;pointer-events:none
+}
+.timeline-entry{
+  --entry-color:var(--blue);
+  position:relative;margin:0 0 13px;padding:15px 19px 16px;overflow:visible!important;
+  background:linear-gradient(140deg,#182d43,#14263a 60%,#102238);
+  border:1px solid #314d66;border-radius:15px;
+  box-shadow:inset 0 1px rgba(255,255,255,.035),0 8px 21px rgba(0,0,0,.10);
+  transition:transform .22s cubic-bezier(.2,.7,.2,1),border-color .22s ease,box-shadow .22s ease;
+}
+.timeline-entry::before{
+  content:"";position:absolute;left:-24px;top:24px;width:13px;height:13px;
+  border-radius:50%;background:var(--entry-color);
+  border:3px solid #0d1b2b;
+  box-shadow:0 0 0 1px var(--entry-color),0 0 14px rgba(117,183,221,.13);
+  pointer-events:none;z-index:1
+}
+.timeline-entry::after{
+  content:"";position:absolute;top:0;left:0;bottom:0;width:2px;border-radius:15px 0 0 15px;
+  background:var(--entry-color);opacity:.50;pointer-events:none
+}
+.timeline-entry:last-child{margin-bottom:0}
+.timeline-entry:hover{
+  transform:translateX(2px);border-color:#4b6b86;
+  box-shadow:inset 0 1px rgba(255,255,255,.05),0 12px 25px rgba(0,0,0,.16)
+}
+.timeline-entry-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.timeline-event-name{font-size:15px;font-weight:780;letter-spacing:-.015em}
+.timeline-entry-head time{font-size:11.5px;color:#bdd1e2;white-space:nowrap;font-variant-numeric:tabular-nums}
+.timeline-entry p{font-size:12.5px;color:#bccfdf;line-height:1.55;margin:9px 0 0}
+.timeline-entry .timeline-duration{color:#e4d5b9;margin-top:8px;font-size:11px}
+.timeline-event-new{animation:timeline-new-event .45s cubic-bezier(.2,.72,.18,1) var(--item-delay,0ms) both}
+@keyframes timeline-new-event{from{opacity:.64;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.timeline-tools{padding-bottom:4px}.timeline-metrics{margin:14px 0}
+.timeline-metric{background:linear-gradient(155deg,#192d44,#14263b);box-shadow:inset 0 1px rgba(255,255,255,.035)}
+.timeline-metric strong{letter-spacing:-.03em}
+.timeline-empty{padding:24px 10px;color:#aac3d5}
+.feeditem{border-color:#2e4b63}.feeditem .stripe{width:4px;min-height:42px;box-shadow:none}
+.feedmeta .badge{border-radius:7px;font-size:10px;padding:4px 8px}
+#actividad .feeditem{border-radius:13px}
+#barras .badge{background:transparent;border:none;padding:0;font-weight:700;white-space:normal}
+#barras .barline{grid-template-columns:minmax(112px,155px) minmax(60px,1fr) 28px}
+#barras .track{height:9px;background:#22364a;border:1px solid #294057}
+#barras .fill{border-radius:99px}
+.table-event .badge{border-radius:8px}
+#estado{font-variant-numeric:tabular-nums}
+@media(max-width:640px){
+ .timeline-list{padding-left:25px;padding-right:3px}
+ .timeline-list::before{left:10px}
+ .timeline-entry::before{left:-22px}
+ .timeline-entry-head{align-items:flex-start}
+ .timeline-entry-head time{font-size:10px}
+ .timeline-entry{padding:13px 12px 14px}
+ .timeline-event-name{font-size:14px}
+ #barras .barline{grid-template-columns:110px minmax(50px,1fr) 20px;gap:7px}
+}
+@media(prefers-reduced-motion:reduce){.timeline-event-new{animation:none!important}.timeline-entry:hover{transform:none!important}}
+
+</style>
+</head>
+<body>
+<main>
+<header class="hero">
+  <div>
+    <div class="eyebrow">INDUSTRIAL MONITOR · PLATAFORMAFINAL</div>
+    <h1>Eventos y alarmas</h1>
+    <p>Historial visual de comunicación, cambios de modo y diagnósticos confirmados. Estados operativos y eventos de comunicación representados en una línea de tiempo clara, con colores discretos y horas verificadas.</p>
+  </div>
+  <div class="live" id="conexion-api"><span class="dot"></span><span id="conexion-texto">Consultando servicio…</span></div>
+</header>
+
+<nav class="nav" aria-label="Navegación principal">
+  <a href="/">▦ Supervisión</a>
+  <a href="/horometro">◷ Horómetro</a>
+  <a href="/eventos" class="active" aria-current="page">⚠ Eventos y alarmas</a>
+  <a href="/reportes">▤ Reportes PDF</a>
+</nav>
+
+<section class="panel" aria-label="Período de análisis diario">
+  <div class="section-title"><h2>Período de análisis</h2><span id="periodo-dia" class="period-range">—</span></div>
+  <div class="period-controls">
+    <label class="field">Día a consultar<input id="dia-consulta" type="date"></label>
+    <button class="btn secondary" id="dia-anterior" type="button">← Día anterior</button>
+    <button class="btn secondary" id="dia-siguiente" type="button">Día siguiente →</button>
+    <button class="btn secondary" id="dia-hoy" type="button">Hoy</button>
+  </div>
+  <p class="period-help" id="nota-periodo">Los eventos se filtran por la fecha de Ecuador (UTC−5). El servidor entrega hasta 1.000 registros recientes; las fechas antiguas podrían no estar completas.</p>
+</section>
+
+<section class="metrics" aria-label="Resumen de eventos consultados">
+  <div class="metric" style="--accent:var(--blue)"><div class="label">Eventos mostrados</div><strong id="k-total">—</strong><small>Según filtros activos</small></div>
+  <div class="metric" style="--accent:var(--red)"><div class="label">Desconexiones</div><strong id="k-desconexion">—</strong><small>Pérdidas de comunicación</small></div>
+  <div class="metric" style="--accent:var(--yellow)"><div class="label">Fallas internas</div><strong id="k-falla">—</strong><small>Solo PLC con diagnóstico</small></div>
+  <div class="metric" style="--accent:var(--green)"><div class="label">Conexiones</div><strong id="k-conexion">—</strong><small>Restablecimientos registrados</small></div>
+  <div class="metric" style="--accent:var(--violet)"><div class="label">Recuperaciones</div><strong id="k-recuperacion">—</strong><small>Fallas resueltas o normalizadas</small></div>
+</section>
+
+<section class="panel">
+  <div class="section-title"><h2>Consulta general del historial</h2><span id="cantidad-tabla">0 registros visibles</span></div>
+  <div class="filters">
+    <label class="field">Buscar por PLC, modelo, IP o detalle<input id="buscar" type="search" placeholder="Ej.: PLC-50, M580, 192.168..." autocomplete="off"></label>
+    <label class="field">Filtrar por PLC<select id="plc"><option value="">Todos los PLC</option></select></label>
+    <label class="field">Filtrar por tipo<select id="tipo"><option value="">Todos los eventos</option></select></label>
+    <label class="field">Registros máximos<select id="limite"><option value="100">100</option><option value="300">300</option><option value="600">600</option><option value="1000">1000</option></select></label>
+    <button class="btn" id="actualizar" type="button">Actualizar</button>
+  </div>
+  <div class="toolbar">
+    <button class="btn secondary" id="exportar" type="button">Exportar CSV</button>
+    <label><input type="checkbox" id="automatico" checked> Actualización automática</label>
+    <div id="estado" role="status" aria-live="polite">Esperando consulta…</div>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="section-title"><h2>Lectura rápida del día</h2><span>Colores y actividad reciente</span></div>
+  <div class="visual">
+    <div>
+      <div class="bars" id="barras"></div>
+      <p class="mini-note">Comparación relativa de eventos por tipo. Esta visualización ayuda a detectar si predominan incidencias de comunicación, cambios de modo o fallas.</p>
+    </div>
+    <div>
+      <div class="section-title" style="margin-bottom:12px"><h2 style="font-size:15px">Actividad reciente</h2><span>Últimos 5 eventos visibles</span></div>
+      <div class="feed" id="actividad"></div>
+    </div>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="section-title"><h2>Historial cronológico por PLC</h2><span id="timeline-estado">Selecciona un PLC para consultar su historial.</span></div>
+  <div class="timeline-tools">
+    <label class="field">PLC a revisar<select id="timeline-plc"><option value="">Selecciona un PLC</option></select></label>
+    <button class="btn" id="timeline-recargar" type="button">Consultar timeline</button>
+  </div>
+  <div class="timeline-metrics">
+    <div class="timeline-metric"><small>Eventos del PLC</small><strong id="tl-total">—</strong></div>
+    <div class="timeline-metric"><small>Desconexiones</small><strong id="tl-desconexiones">—</strong></div>
+    <div class="timeline-metric"><small>Fallas internas</small><strong id="tl-fallas">—</strong></div>
+    <div class="timeline-metric"><small>Recuperaciones / conexión</small><strong id="tl-recuperaciones">—</strong></div>
+  </div>
+  <div class="timeline-list" id="timeline-lista"></div>
+  <p class="timeline-help">Eventos del día seleccionado entre los 1.000 registros recientes disponibles para este PLC. Los eventos históricos no equivalen a alarmas actualmente activas.</p>
+</section>
+
+<section class="panel">
+  <div class="section-title"><h2>Detalle tabular</h2><span>Registro completo visible según filtros</span></div>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Fecha Ecuador</th><th>PLC / Modelo / IP</th><th>Tipo de evento</th><th>Detalle</th><th>Duración</th></tr></thead>
+      <tbody id="filas"></tbody>
+    </table>
+  </div>
+  <div id="vacio" class="empty" hidden>No hay eventos para el criterio seleccionado.</div>
+</section>
+
+<p class="footnote">Las desconexiones no confirman por sí solas una falla interna del PLC; pueden deberse a apagado, red o mantenimiento. Las fallas internas sólo se muestran cuando el backend reporta diagnóstico válido. Los cambios RUN, PROGRAM y STOP describen modo operativo observado por la plataforma.</p>
+</main>
+
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+// Paleta SCADA por evento: los colores son presentación, no diagnóstico nuevo.
+// Los iconos son SVG locales; no se necesitan librerías ni recursos externos.
+const metaTipos = {
+  RUN:                 {label:'RUN',          className:'run',         icon:'run',        color:'#47E0B4',desc:'Modo de operación RUN'},
+  PROGRAM:             {label:'PROGRAM',      className:'program',     icon:'program',    color:'#F5C66E',desc:'Modo de operación PROGRAM'},
+  STOP:                {label:'STOP',         className:'stop',        icon:'stop',       color:'#FF9A82',desc:'Modo de operación STOP'},
+  CONEXION:            {label:'Conexión',     className:'conexion',    icon:'link',       color:'#73BCFF',desc:'Comunicación establecida o recuperada'},
+  DESCONEXION:         {label:'Desconexión',  className:'desconexion', icon:'unplug',     color:'#F476A2',desc:'Pérdida de comunicación'},
+  FALLA:               {label:'Falla',        className:'falla',       icon:'alert',      color:'#FFAE6B',desc:'Diagnóstico interno de falla'},
+  RECUPERACION_FALLA:  {label:'Recuperación', className:'recuperacion',icon:'recover',    color:'#C7A8FF',desc:'Recuperación tras una falla'},
+  ERROR:               {label:'ERROR',        className:'error',       icon:'alert',      color:'#FF6E83',desc:'Modo o condición de error'},
+  POSIBLE_CAMBIO_IP:   {label:'Cambio de IP', className:'identidad',   icon:'network',    color:'#66D8DD',desc:'Posible cambio de dirección IP'},
+  IDENTIDAD_INCORRECTA:{label:'Identidad',    className:'identidad',   icon:'network',    color:'#66D8DD',desc:'Identidad de red distinta a la esperada'},
+  IDENTIDAD_RESTABLECIDA:{label:'Identidad restablecida',className:'identidad',icon:'network',color:'#66D8DD',desc:'Identidad de red restablecida'}
+};
+const metaDesconocido={label:'Otro evento',className:'other',icon:'info',color:'#B6C8DA',desc:'Evento registrado por la plataforma'};
+const iconosSVG={
+  run:'<path d="m8 5 11 7-11 7z" fill="currentColor" stroke="none"/>',
+  program:'<rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/>',
+  stop:'<rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor" stroke="none"/>',
+  link:'<path d="M10 13a5 5 0 0 0 7.07 0l2.43-2.43a5 5 0 0 0-7.07-7.07l-1.4 1.4"/><path d="M14 11a5 5 0 0 0-7.07 0L4.5 13.43a5 5 0 0 0 7.07 7.07l1.4-1.4"/>',
+  unplug:'<path d="m3 3 18 18"/><path d="M9 7v3m-2 2H4m11 5v-3m2-2h3"/><path d="M7 13a5 5 0 0 0 6 6m4-8a5 5 0 0 0-6-6"/>',
+  alert:'<path d="M10.3 3.8 2.2 18a2 2 0 0 0 1.8 3h16a2 2 0 0 0 1.8-3L13.7 3.8a2 2 0 0 0-3.4 0z"/><path d="M12 9v5"/><circle cx="12" cy="17.5" r=".8" fill="currentColor" stroke="none"/>',
+  recover:'<path d="M3 11a9 9 0 1 1 2.4 6.2"/><path d="M3 4v7h7"/><path d="m9 13 2.2 2.2L16 10"/>',
+  network:'<rect x="9" y="2.5" width="6" height="5" rx="1.4"/><rect x="2" y="16.5" width="6" height="5" rx="1.4"/><rect x="16" y="16.5" width="6" height="5" rx="1.4"/><path d="M12 7.5v4.5M5 16.5v-4.5h14v4.5"/>',
+  info:'<path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z"/><path d="M12 11v5"/><path d="M12 8h.01"/>'
+};
+function crearIcono(tipo) {
+  const m=metaTipo(tipo);
+  const caja=document.createElement('span');
+  caja.className='scada-event-icon';
+  caja.setAttribute('aria-hidden','true');
+  caja.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" focusable="false" aria-hidden="true">'+(iconosSVG[m.icon]||iconosSVG.info)+'</svg>';
+  return caja;
+}
+function normalizarTipo(tipo){return String(tipo||'').trim().toUpperCase();}
+function metaTipo(tipo){
+  const clave=normalizarTipo(tipo);
+  if(metaTipos[clave])return metaTipos[clave];
+  // Variantes de eventos de identidad y cambio IP guardadas por distintas versiones.
+  if(/(?:IDENTIDAD|CAMBIO[_ ]?(?:IP|MAC)|MAC[_ ]?(?:DISTINTA|INCORRECTA))/.test(clave)) {
+    return {...metaTipos.POSIBLE_CAMBIO_IP,label:clave.replaceAll('_',' ').toLocaleLowerCase('es').replace(/^./,c=>c.toLocaleUpperCase('es'))};
+  }
+  return {...metaDesconocido,label:clave?clave.replaceAll('_',' '):'Evento'};
+}
+const tipos=['CONEXION','DESCONEXION','FALLA','RECUPERACION_FALLA','RUN','PROGRAM','STOP','ERROR'].map(t=>[t,metaTipos[t].label,'linear-gradient(90deg,'+metaTipos[t].color+','+metaTipos[t].color+'AA)']);
+const etiquetas=Object.fromEntries(Object.entries(metaTipos).map(([tipo,meta])=>[tipo,meta.label]));
+const ZONA='America/Guayaquil';
+let eventos=[],filtrados=[],secuencia=0,consultando=false,timelinePeticion=0;
+function metaTipo(tipo){return metaTipos[tipo]||{label:etiquetas[tipo]||tipo||'Evento',className:'other',icon:'•',color:'var(--blue)',desc:'Evento registrado por la plataforma'}}
+function fechaLocalISO(valor){const d=new Date(valor);if(Number.isNaN(d.getTime()))return '';const p=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:ZONA,year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(d).filter(x=>x.type!=='literal').map(x=>[x.type,x.value]));return `${p.year}-${p.month}-${p.day}`;}
+function moverDia(fecha,cantidad){const d=new Date(fecha+'T12:00:00Z');if(Number.isNaN(d.getTime()))return fecha;d.setUTCDate(d.getUTCDate()+cantidad);return d.toISOString().slice(0,10)}
+function diaActivo(){return $('dia-consulta').value;}
+function actualizarEtiquetaDia(){const dia=diaActivo();if(!dia)return;const d=new Date(dia+'T12:00:00Z');$('periodo-dia').textContent=new Intl.DateTimeFormat('es-EC',{weekday:'long',day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(d)}
+function perteneceDia(evento){return fechaLocalISO(evento.fecha)===diaActivo();}
+function cambiarDia(cantidad){$('dia-consulta').value=moverDia(diaActivo(),cantidad);actualizarEtiquetaDia();cargar();if($('timeline-plc').value)cargarTimeline();}
+function nodo(tag,clase,contenido){const el=document.createElement(tag);if(clase)el.className=clase;if(contenido!==undefined)el.textContent=String(contenido);return el}
+function badgeTipo(tipo){const m=metaTipo(tipo);const el=nodo('span',`badge ${m.className}`,m.label);el.style.setProperty('--event-accent',m.color);return el}
+function fecha(v){if(!v)return '—';const d=new Date(v);return Number.isNaN(d.getTime())?'—':d.toLocaleString('es-EC',{timeZone:ZONA,dateStyle:'short',timeStyle:'medium'})}
+function duracion(v){if(v===null||v===undefined||!Number.isFinite(Number(v)))return '—';const s=Math.max(0,Math.round(Number(v)));return `${Math.floor(s/3600)} h ${String(Math.floor(s%3600/60)).padStart(2,'0')} min ${String(s%60).padStart(2,'0')} s`}
+function cuentaTipo(lista,tipo){return lista.filter(e=>e.tipo===tipo).length}
+function dibujar(){
+  const q=$('buscar').value.trim().toLowerCase();
+  filtrados=eventos.filter(e=>perteneceDia(e)&&(!q||[e.plcId,e.modelo,e.ip,e.detalle,e.tipo].some(x=>String(x??'').toLowerCase().includes(q))));
+  const cuenta=t=>cuentaTipo(filtrados,t);
+  $('k-total').textContent=filtrados.length;
+  $('k-desconexion').textContent=cuenta('DESCONEXION');
+  $('k-falla').textContent=cuenta('FALLA');
+  $('k-conexion').textContent=cuenta('CONEXION');
+  $('k-recuperacion').textContent=cuenta('RECUPERACION_FALLA');
+
+  $('barras').replaceChildren();
+  const visibles=tipos.map(([tipo])=>cuenta(tipo)).filter(Boolean);
+  const max=Math.max(1,...visibles,filtrados.length?1:0);
+  for(const [tipo,nombre,color] of tipos){
+    const total=cuenta(tipo);
+    const m=metaTipo(tipo); const r=nodo('div','barline');
+    const left=nodo('div','table-event');left.append(badgeTipo(tipo));
+    const track=nodo('div','track'),fill=nodo('div','fill');fill.style.width=(total/max*100)+'%';fill.style.background=color;track.append(fill);
+    r.append(left,track,nodo('strong','',total));$('barras').append(r);
+  }
+
+  $('actividad').replaceChildren();
+  const recientes=filtrados.slice(0,5);
+  for(const e of recientes){
+    const m=metaTipo(e.tipo);const item=nodo('div','feeditem');item.style.setProperty('--stripe-color',m.color);
+    const stripe=nodo('div','stripe');stripe.style.background=m.color;item.style.setProperty('--event-accent',m.color);
+    const body=nodo('div'),meta=nodo('div','feedmeta');meta.append(badgeTipo(e.tipo),nodo('small','',`PLC-${e.plcId??'—'} · ${e.modelo||'—'}`));
+    body.append(meta,nodo('strong','',e.detalle||e.ip||'Sin detalle registrado'));
+    item.append(stripe,body,nodo('time','',fecha(e.fecha)));$('actividad').append(item);
+  }
+  if(!recientes.length)$('actividad').append(nodo('p','mini-note','No hay actividad visible para este día y filtros activos.'));
+
+  $('filas').replaceChildren();
+  for(const e of filtrados){
+    const tr=nodo('tr');
+    tr.append(nodo('td','',fecha(e.fecha)));
+    const plc=nodo('td','');plc.append(nodo('strong','',`PLC-${String(e.plcId??'—').padStart(2,'0')}`),nodo('small','',`${String(e.modelo||'—')} · ${String(e.ip||'—')}`));tr.append(plc);
+    const tipoTd=nodo('td','table-event');tipoTd.append(badgeTipo(e.tipo));tr.append(tipoTd);
+    tr.append(nodo('td','',e.detalle||'—'),nodo('td','',duracion(e.duracionSegundos)));
+    $('filas').append(tr);
+  }
+  $('vacio').hidden=filtrados.length!==0;
+  $('cantidad-tabla').textContent=`${filtrados.length} registros visibles`;
+}
+async function cargar(){
+  if(consultando)return;consultando=true;const id=++secuencia;$('actualizar').disabled=true;$('estado').textContent='Consultando eventos…';
+  try{
+    const params=new URLSearchParams({limite:$('limite').value});if($('plc').value)params.set('plcId',$('plc').value);if($('tipo').value)params.set('tipo',$('tipo').value);
+    const r=await fetch('/api/eventos?'+params,{cache:'no-store'});if(!r.ok)throw Error('Error HTTP '+r.status);
+    const data=await r.json();if(!Array.isArray(data.eventos))throw Error('Respuesta de eventos inválida');if(id!==secuencia)return;
+    eventos=data.eventos.slice().sort((a,b)=>new Date(b.fecha||0)-new Date(a.fecha||0));dibujar();
+    $('estado').textContent=`${filtrados.length} eventos del ${diaActivo()} · ${eventos.length} registros recientes revisados · ${new Date().toLocaleTimeString('es-EC',{timeZone:ZONA})}`;
+    $('estado').classList.remove('error');$('conexion-api').className='live ok';$('conexion-texto').textContent='Servicio disponible';
+  }catch(e){$('estado').textContent='No se pudo actualizar: '+e.message;$('estado').classList.add('error');$('conexion-api').className='live bad';$('conexion-texto').textContent='Servicio no disponible'}
+  finally{consultando=false;$('actualizar').disabled=false}
+}
+async function inventario(){
+  try{const r=await fetch('/api/horometro',{cache:'no-store'});if(!r.ok)throw Error('Inventario no disponible');const d=await r.json();if(!Array.isArray(d.equipos))return;
+    const actual=$('plc').value,actualTL=$('timeline-plc').value;
+    for(const e of d.equipos){
+      const texto=`PLC-${e.id} · ${e.modelo} · ${e.ip}`;
+      const o=nodo('option','',texto);o.value=String(e.id);$('plc').append(o);
+      const t=nodo('option','',texto);t.value=String(e.id);$('timeline-plc').append(t);
+    }
+    $('plc').value=actual;$('timeline-plc').value=actualTL;
+  }catch(e){console.warn('No se pudo cargar el selector de PLC:',e.message)}
+}
+function csvCelda(x){const s=String(x??'');return '"'+(/^[=+@\-\t\r]/.test(s)?"'"+s:s).replaceAll('"','""')+'"'}
+function exportar(){if(!filtrados.length){$('estado').textContent='No hay registros visibles para exportar.';return}const cab=['Fecha Ecuador','PLC','Modelo','IP','Tipo','Detalle','Duración segundos'];const filas=filtrados.map(e=>[fecha(e.fecha),e.plcId,e.modelo,e.ip,e.tipo,e.detalle,e.duracionSegundos]);const csv='\uFEFF'+[cab,...filas].map(r=>r.map(csvCelda).join(';')).join('\r\n');const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='eventos_plc_'+new Date().toISOString().slice(0,10)+'.csv';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+let timelineFirma = null;
+let timelineIdentidad = '';
+let ultimoTimeline = [];
+function firmaEvento(e) {
+  return [e.id ?? '', e.fecha ?? '', e.tipo ?? '', e.detalle ?? '', e.duracionSegundos ?? ''].join('|');
+}
+function limpiarTimeline() {
+  const lista = $('timeline-lista');
+  lista.replaceChildren();
+  timelineFirma = null;
+  ultimoTimeline = [];
+}
+function guardarAnclaje(lista) {
+  const top = lista.scrollTop;
+  const limite = lista.getBoundingClientRect().top;
+  const items = [...lista.querySelectorAll('.timeline-entry')];
+  const primero = items.find(e => e.getBoundingClientRect().bottom > limite + 1);
+  return {top, key: primero?.dataset.eventKey, offset: primero ? primero.getBoundingClientRect().top - limite : 0};
+}
+function restaurarAnclaje(lista, anclaje) {
+  if (!anclaje) return;
+  const buscar = () => {
+    const candidato = [...lista.querySelectorAll('.timeline-entry')].find(e => e.dataset.eventKey === anclaje.key);
+    if (candidato) {
+      const delta = candidato.getBoundingClientRect().top - lista.getBoundingClientRect().top;
+      lista.scrollTop += delta - anclaje.offset;
+    } else {
+      lista.scrollTop = anclaje.top;
+    }
+  };
+  buscar();
+  requestAnimationFrame(buscar);
+}
+function pintarTimeline(registros) {
+  const lista = $('timeline-lista');
+  const firma = registros.map(firmaEvento).join('\n');
+  if (firma === timelineFirma) return;
+  const anclaje = timelineFirma === null ? null : guardarAnclaje(lista);
+  const anteriores = new Set(ultimoTimeline);
+  timelineFirma = firma;
+  ultimoTimeline = registros.map(firmaEvento);
+  const fragment = document.createDocumentFragment();
+  if (!registros.length) {
+    fragment.append(nodo('p', 'timeline-empty', 'No hay eventos registrados para este PLC en el día seleccionado.'));
+  }
+  for (const [i, e] of registros.entries()) {
+    const m = metaTipo(e.tipo);
+    const item = nodo('article','timeline-entry');
+    item.dataset.eventKey = firmaEvento(e);
+    item.dataset.eventType = String(e.tipo || 'OTRO').toLowerCase();
+    item.style.setProperty('--entry-color',m.color);
+    item.append(crearIcono(e.tipo));
+    const encabezado = nodo('div', 'timeline-entry-head');
+    const nombre = nodo('strong', 'timeline-event-name', m.label);
+    nombre.style.color = m.color;
+    const hora = nodo('time', '', fecha(e.fecha));
+    if (e.fecha && !Number.isNaN(new Date(e.fecha).getTime())) hora.dateTime = new Date(e.fecha).toISOString();
+    encabezado.append(nombre, hora);
+    item.append(encabezado, nodo('p', '', e.detalle || m.desc));
+    if (e.duracionSegundos !== null && e.duracionSegundos !== undefined)
+      item.append(nodo('p', 'timeline-duration', `Duración registrada: ${duracion(e.duracionSegundos)}`));
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && i < 5 && !anteriores.has(firmaEvento(e))) {
+      item.classList.add('timeline-event-new');
+      item.style.setProperty('--item-delay', `${i * 40}ms`);
+    }
+    fragment.append(item);
+  }
+  lista.replaceChildren(fragment);
+  restaurarAnclaje(lista, anclaje);
+}
+async function cargarTimeline(){
+  const plcId=$('timeline-plc').value, dia=diaActivo(), version=++timelinePeticion;
+  const identidad = `${plcId}|${dia}`;
+  if (identidad!==timelineIdentidad) {
+    timelineIdentidad = identidad;
+    limpiarTimeline();
+  }
+  if(!plcId){$('timeline-estado').textContent='Selecciona un PLC para consultar su historial.';['tl-total','tl-desconexiones','tl-fallas','tl-recuperaciones'].forEach(id=>$(id).textContent='—');return}
+  if (!timelineFirma) $('timeline-estado').textContent='Consultando historial del PLC…';
+  try{
+    const params=new URLSearchParams({plcId,limite:'1000'});
+    const r=await fetch('/api/eventos?'+params,{cache:'no-store'});
+    if(!r.ok)throw Error('Error HTTP '+r.status);
+    const data=await r.json();
+    if(!Array.isArray(data.eventos))throw Error('Respuesta inválida');
+    if(version!==timelinePeticion || plcId!==$('timeline-plc').value || dia!==diaActivo())return;
+    const registros=data.eventos.filter(e=>String(e.plcId)===plcId&&fechaLocalISO(e.fecha)===dia)
+      .sort((a,b)=>new Date(b.fecha||0)-new Date(a.fecha||0));
+    $('tl-total').textContent=registros.length;
+    $('tl-desconexiones').textContent=cuentaTipo(registros,'DESCONEXION');
+    $('tl-fallas').textContent=cuentaTipo(registros,'FALLA');
+    $('tl-recuperaciones').textContent=cuentaTipo(registros,'CONEXION')+cuentaTipo(registros,'RECUPERACION_FALLA');
+    $('timeline-estado').textContent=`PLC-${plcId} · ${registros.length} eventos recibidos · ${new Date().toLocaleTimeString('es-EC',{timeZone:ZONA})}`;
+    pintarTimeline(registros);
+  }catch(error){
+    if(version!==timelinePeticion)return;
+    $('timeline-estado').textContent='No se pudo consultar el historial: '+error.message;
+  }
+}
+(function initTipos(){
+  const select=$('tipo');
+  Object.keys(etiquetas).forEach(tipo=>{const op=document.createElement('option');op.value=tipo;op.textContent=etiquetas[tipo];select.append(op)});
+})();
+$('dia-consulta').value=fechaLocalISO(new Date());actualizarEtiquetaDia();
+$('dia-consulta').addEventListener('change',()=>{actualizarEtiquetaDia();cargar();if($('timeline-plc').value)cargarTimeline()});
+$('dia-anterior').addEventListener('click',()=>cambiarDia(-1));$('dia-siguiente').addEventListener('click',()=>cambiarDia(1));$('dia-hoy').addEventListener('click',()=>{$('dia-consulta').value=fechaLocalISO(new Date());actualizarEtiquetaDia();cargar();if($('timeline-plc').value)cargarTimeline()});
+$('timeline-plc').addEventListener('change',cargarTimeline);$('timeline-recargar').addEventListener('click',cargarTimeline);
+$('buscar').addEventListener('input',dibujar);['plc','tipo','limite'].forEach(id=>$(id).addEventListener('change',cargar));$('actualizar').addEventListener('click',cargar);$('exportar').addEventListener('click',exportar);
+setInterval(()=>{if($('automatico').checked&&!document.hidden){cargar();if($('timeline-plc').value)cargarTimeline()}},15000);
+// Acceso contextual desde avisos y mapa. Solo cambia filtros locales y consulta GET.
+async function abrirTimelineDePLC(id) {
+  const normalizado=String(id||'').trim();
+  if(!/^\d{1,8}$/.test(normalizado))return;
+  const selector=$('timeline-plc');
+  if(![...selector.options].some(op=>op.value===normalizado)){
+    const op=nodo('option','',`PLC-${normalizado} · Histórico`);op.value=normalizado;selector.append(op);
+  }
+  selector.value=normalizado;
+  await cargarTimeline();
+  const panel=selector.closest('.panel')||selector;
+  panel.classList.remove('scada-timeline-target');
+  void panel.offsetWidth;
+  panel.classList.add('scada-timeline-target');
+  if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+    panel.scrollIntoView({behavior:'smooth',block:'start'});
+  else panel.scrollIntoView({behavior:'auto',block:'start'});
+  selector.focus({preventScroll:true});
+  setTimeout(()=>panel.classList.remove('scada-timeline-target'),2200);
+}
+window.PLATAFORMA_ABRIR_TIMELINE=abrirTimelineDePLC;
+const plcSolicitado=new URLSearchParams(location.search).get('plc');
+inventario().then(async()=>{
+  await cargar();
+  if(plcSolicitado && /^\d{1,8}$/.test(plcSolicitado)) await abrirTimelineDePLC(plcSolicitado);
+});
+</script>
+<script src="/js/experiencia-fase7.js" defer></script>
+</body>
+</html>
