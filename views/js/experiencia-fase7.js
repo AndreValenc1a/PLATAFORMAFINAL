@@ -11,9 +11,8 @@
   const pagina = paginas[location.pathname.replace(/\/$/, '') || '/'] || 'PLATAFORMAFINAL';
   const KEY_AVISOS = 'plataformafinal:fase73:avisos';
   const KEY_ESTADOS = 'plataformafinal:fase73:estados';
-  const MAX_AVISOS = 35;
+  // Sin caducidad ni recorte automático: borrado únicamente por acción del usuario.
   const INTERVALO = 4500;
-  const MAX_CONTINUIDAD = 20000;
   // Edite esta lista SOLO si el laboratorio define qué PLC tienen prioridad de proceso.
   // Por defecto ninguno se presume crítico solo por estar apagado.
   // Ejemplo, cuando así se apruebe: new Set(['50'])
@@ -29,11 +28,18 @@
     timeZone: 'America/Guayaquil', hour: '2-digit', minute: '2-digit', second: '2-digit'
   }).format(fecha);
   function leerSesion(llave, fallback) {
-    try { const data = JSON.parse(sessionStorage.getItem(llave)); return data ?? fallback; }
+    try { const data = JSON.parse(localStorage.getItem(llave) ?? sessionStorage.getItem(llave)); return data ?? fallback; }
     catch (_) { return fallback; }
   }
   function guardarSesion(llave, valor) {
-    try { sessionStorage.setItem(llave, JSON.stringify(valor)); } catch (_) { /* almacenamiento opcional */ }
+    try {
+      localStorage.setItem(llave, JSON.stringify(valor));
+      sessionStorage.removeItem(llave);
+      return true;
+    } catch (_) {
+      document.dispatchEvent(new CustomEvent('plataforma:avisos-sin-espacio'));
+      return false;
+    }
   }
 
   function contextualizar() {
@@ -243,19 +249,19 @@
     const prevData = leerSesion(KEY_ESTADOS, null);
     const prev = new Map();
     let listo = false;
-    if (prevData && Date.now() - prevData.marca < MAX_CONTINUIDAD && Array.isArray(prevData.equipos)) {
+    if (prevData && Array.isArray(prevData.equipos)) {
       for (const [id, estado] of prevData.equipos) prev.set(id, estado);
       listo = true;
     }
     const historico = leerSesion(KEY_AVISOS, []);
     const avisos = Array.isArray(historico) ? historico.filter(a => a && /^\d+$/.test(String(a.id))
-      && typeof a.titulo === 'string' && typeof a.detalle === 'string').slice(0, MAX_AVISOS) : [];
+      && typeof a.titulo === 'string' && typeof a.detalle === 'string') : [];
     let activos = [];
     let activoValidado = false;
     let estadoHttp = 'consultando';
     let consultando = false;
     let panelAbierto = false;
-    let pestaña = 'activos';
+    let pestaña = 'cambios';
     let ultimaNotificacion = 0;
     const scrollTab = { activos: 0, cambios: 0 };
     let firmaDibujo = '';
@@ -278,7 +284,7 @@
     estado.setAttribute('role', 'status');
     const tabs = crear('div', 'ui-notify-tabs'); tabs.setAttribute('role', 'tablist');
     const tabActivos = crear('button', 'ui-notify-tab', 'Condiciones activas');
-    const tabNuevos = crear('button', 'ui-notify-tab', 'Cambios recientes');
+    const tabNuevos = crear('button', 'ui-notify-tab', 'Cambios registrados');
     tabActivos.type = tabNuevos.type = 'button';
     tabActivos.setAttribute('role', 'tab'); tabNuevos.setAttribute('role', 'tab');
     tabActivos.id = 'ui-notify-tab-active';
@@ -293,7 +299,7 @@
     indicadores.setAttribute('aria-label', 'Resumen de prioridades');
     const pie = crear('div', 'ui-notify-foot');
     const enlace = crear('a', '', 'Ver historial completo'); enlace.href = '/eventos';
-    const vistos = crear('button', 'ui-notify-action', 'Marcar cambios como vistos'); vistos.type = 'button';
+    const vistos = crear('button', 'ui-notify-action', 'Borrar notificaciones'); vistos.type = 'button';
     pie.append(enlace, vistos);
     panel.append(cabecera, estado, tabs, indicadores, listado, pie);
     const boton = crear('button', 'ui-notify-toggle'); boton.type = 'button';
@@ -393,8 +399,12 @@
       dibujar(true, true);
     }
     vistos.addEventListener('click', () => {
-      avisos.forEach(aviso => { aviso.visto = true; });
-      guardarSesion(KEY_AVISOS, avisos); dibujar(true);
+      // Actualizar almacenamiento antes de vaciar la vista.
+      if (guardarSesion(KEY_AVISOS, [])) {
+        avisos.length = 0;
+        toast.hidden = true;
+        dibujar(true);
+      }
     });
 
     function actualizarBarra() {
@@ -408,7 +418,7 @@
       boton.dataset.pendientes = nuevos ? 'si' : 'no';
       boton.dataset.activas = numActivos > 0 ? 'si' : 'no';
       tabActivos.textContent = `Condiciones activas${numActivos !== null ? ' (' + numActivos + ')' : ''}`;
-      tabNuevos.textContent = `Cambios recientes (${avisos.length})`;
+      tabNuevos.textContent = `Cambios registrados (${avisos.length})`;
       tabActivos.setAttribute('aria-selected', String(pestaña === 'activos'));
       tabNuevos.setAttribute('aria-selected', String(pestaña === 'cambios'));
       tabActivos.tabIndex = pestaña === 'activos' ? 0 : -1;
@@ -423,7 +433,7 @@
       };
       estado.textContent = mensajes[estadoHttp];
       vistos.hidden = pestaña !== 'cambios';
-      vistos.disabled = avisos.every(a => a.visto);
+      vistos.disabled = avisos.length === 0;
       indicadores.hidden = pestaña !== 'activos' || !activoValidado;
       if (!indicadores.hidden) {
         const criticas = activos.filter(a => a.prioridad === 'critica').length;
@@ -461,7 +471,7 @@
       informacion.append(cabeceraItem, crear('p', '', item.detalle));
       fila.append(informacion);
       if (esCambio) {
-        const tiempo = crear('time', 'ui-timeline-time', item.hora || 'Hora no registrada');
+        const tiempo = crear('time', 'ui-timeline-time', Number.isFinite(item.ts) ? new Intl.DateTimeFormat('es-EC', {timeZone: 'America/Guayaquil', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(new Date(item.ts)) : (item.hora || 'Hora no registrada'));
         if (Number.isFinite(item.ts)) tiempo.dateTime = new Date(item.ts).toISOString();
         fila.append(tiempo);
       }
@@ -532,7 +542,7 @@
         }
       } else if (avisos.length === 0) {
         listado.append(crear('div', 'ui-notify-empty',
-          'Aún no hay cambios detectados en esta sesión. Las condiciones existentes están en «Condiciones activas».'));
+          'Aún no hay cambios registrados. Las condiciones existentes están en «Condiciones activas».'));
       } else {
         const timeline = crear('section', 'ui-timeline');
         timeline.setAttribute('aria-label', 'Línea de tiempo de cambios recientes');
@@ -615,7 +625,17 @@
     }
     function registrar(id, titulo, detalle, gravedad, tipo = 'general') {
       const aviso = { id, titulo, detalle, gravedad, tipo, ts: Date.now(), hora: relojEcuador(new Date()), visto: false };
-      avisos.unshift(aviso); avisos.length = Math.min(avisos.length, MAX_AVISOS);
+      const almacenados = leerSesion(KEY_AVISOS, []);
+      if (Array.isArray(almacenados)) {
+        const conocidos = new Set(avisos.map(a => a.uid || JSON.stringify(a)));
+        for (const a of almacenados) {
+          if (a && typeof a.titulo === 'string' && typeof a.detalle === 'string'
+              && !conocidos.has(a.uid || JSON.stringify(a))) avisos.push(a);
+        }
+      }
+      aviso.uid = crypto.randomUUID ? crypto.randomUUID() : Date.now() + '-' + Math.random();
+      avisos.unshift(aviso);
+      avisos.sort((a, b) => (b.ts || 0) - (a.ts || 0));
       guardarSesion(KEY_AVISOS, avisos);
       dibujar(true);
       enfatizarCambioPLC(id, gravedad, tipo, detalle);
@@ -633,7 +653,7 @@
       return {
         comunicacion: String(p.comunicacion || 'NO DISPONIBLE').toUpperCase(),
         modo: String(p.modoOperacion || 'DESCONOCIDO').toUpperCase(),
-        falla: p.estadoFalla === true,
+        falla: typeof p.estadoFalla === 'boolean' ? p.estadoFalla : null,
         macDistinta: p.identidadCoincide === false && /^[0-9A-F]{12}$/.test(
           String(p.macDetectada || '').replace(/[^a-fA-F0-9]/g, '').toUpperCase())
       };
@@ -669,21 +689,26 @@
     function comparar(id, plc, anterior, actual) {
       const titulo = `PLC-${id} · ${plc.modelo || 'Equipo'}`;
       if (anterior.comunicacion !== actual.comunicacion) {
-        if (actual.comunicacion === 'DESCONECTADO')
-          registrar(id, titulo, 'Pérdida de comunicación. Comprueba alimentación y red.', PLC_PRIORITARIOS.has(id) ? 'critical' : 'warning', 'comunicacion');
-        else if (anterior.comunicacion === 'DESCONECTADO' && actual.comunicacion === 'CONECTADO')
-          registrar(id, titulo, 'Comunicación restablecida.', 'good', 'comunicacion');
-        else registrar(id, titulo, 'Comunicación: ' + actual.comunicacion + '.', 'warning', 'comunicacion');
+        const recuperada = actual.comunicacion === 'CONECTADO';
+        registrar(id, titulo, 'Comunicación: ' + anterior.comunicacion + ' → ' + actual.comunicacion + '.',
+          recuperada ? 'good' : 'warning', 'comunicacion');
       }
-      if (anterior.comunicacion === 'CONECTADO' && actual.comunicacion === 'CONECTADO') {
-        if (anterior.falla !== actual.falla)
-          registrar(id, titulo, actual.falla ? 'Falla reportada por diagnóstico del PLC.' : 'El diagnóstico ya no reporta la falla anterior.', actual.falla ? 'critical' : 'good', 'falla');
+      if (actual.comunicacion === 'CONECTADO') {
+        if (anterior.falla !== actual.falla && actual.falla !== null) {
+          const detalle = actual.falla ? 'Falla reportada por diagnóstico del PLC.'
+            : anterior.falla === true ? 'Recuperación: el diagnóstico ya no reporta la falla anterior.'
+            : 'Diagnóstico disponible: sin falla reportada.';
+          registrar(id, titulo, detalle, actual.falla ? 'critical' : 'good', 'falla');
+        }
         if (anterior.modo !== actual.modo)
-          registrar(id, titulo, 'Cambio de modo a ' + actual.modo + '.', actual.modo === 'RUN' ? 'good' : 'warning', 'modo');
+          registrar(id, titulo, 'Modo: ' + anterior.modo + ' → ' + actual.modo + '.',
+            actual.modo === 'ERROR' ? 'critical' : actual.modo === 'RUN' ? 'good' : 'warning', 'modo');
         if (anterior.macDistinta !== actual.macDistinta)
-          registrar(id, titulo, actual.macDistinta ? 'MAC detectada distinta de la esperada.' : 'Discrepancia de identidad MAC ya no detectada.', actual.macDistinta ? 'critical' : 'good', 'identidad');
+          registrar(id, titulo, actual.macDistinta ? 'MAC detectada distinta de la esperada.'
+            : 'Discrepancia de identidad MAC ya no detectada.', actual.macDistinta ? 'critical' : 'good', 'identidad');
       }
     }
+
     async function comprobar() {
       if (consultando || document.hidden) return;
       consultando = true;
@@ -696,8 +721,7 @@
         if (!data || data.estado !== 'ACTIVO' || !Array.isArray(data.plc)) {
           estadoHttp = data && data.estado === 'DETENIDO' ? 'detenido' : 'error';
           activoValidado = false; activos = [];
-          listo = false; prev.clear();
-          guardarSesion(KEY_ESTADOS, null);
+
           dibujar();
           window.dispatchEvent(new CustomEvent('plataforma:sin-datos', {
             detail: { motivo: estadoHttp === 'detenido' ? 'Supervisión detenida' : 'Respuesta sin datos válidos' }
@@ -725,8 +749,7 @@
       } catch (_) {
         estadoHttp = 'error';
         activoValidado = false; activos = [];
-        listo = false; prev.clear();
-        guardarSesion(KEY_ESTADOS, null);
+
         dibujar();
         window.dispatchEvent(new CustomEvent('plataforma:sin-datos', {
           detail: { motivo: 'Sin conexión HTTP con el servidor' }
@@ -735,15 +758,22 @@
         clearTimeout(timeout); consultando = false;
       }
     }
+    window.addEventListener('storage', event => {
+      if (event.key !== KEY_AVISOS) return;
+      const guardados = leerSesion(KEY_AVISOS, []);
+      if (!Array.isArray(guardados)) return;
+      avisos.splice(0, avisos.length, ...guardados.filter(a => a &&
+        /^\d+$/.test(String(a.id)) && typeof a.titulo === 'string' && typeof a.detalle === 'string'));
+      dibujar(true);
+    });
+    document.addEventListener('plataforma:avisos-sin-espacio', () => {
+      estado.textContent = 'No se pudieron guardar los cambios. Revisa el espacio del navegador antes de cerrar esta página.';
+      estado.setAttribute('role', 'alert');
+    });
     dibujar(); comprobar();
     setInterval(comprobar, INTERVALO);
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden) {
-        // Tras ausencias prolongadas no se infieren transiciones de PLC.
-        const respaldo = leerSesion(KEY_ESTADOS, null);
-        if (!respaldo || Date.now() - respaldo.marca > MAX_CONTINUIDAD) {
-          listo = false; prev.clear();
-        }
         comprobar();
       }
     });
