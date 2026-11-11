@@ -17,8 +17,9 @@ const eventosService = require("../services/eventosService");
 const horometroService = require("../services/horometroService");
 const pool = require("../config/database");
 
-const HOST = "127.0.0.1";
-const PUERTO = 3000;
+// Direccion de escucha del servidor HTTP
+const HOST = process.env.HOST || "127.0.0.1";
+const PUERTO = Number(process.env.PORT || 3000);
 const DIRECTORIO_VIEWS = path.resolve(__dirname, "../views");
 const RUTA_INTERFAZ = path.join(DIRECTORIO_VIEWS, "index.html");
 let cerrando = false;
